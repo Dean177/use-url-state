@@ -1,0 +1,7 @@
+coverage
+node_modules
+yarn-error.log
+yarn.lock
+setupTestFramework.js
+src
+dist/withUrlState.test.js
