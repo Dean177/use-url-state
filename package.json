@@ -57,6 +57,7 @@
     }
   },
   "license": "MIT",
+  "files": ["dist"],
   "main": "dist/withUrlState.js",
   "types": "dist/withUrlState.d.ts",
   "scripts": {
