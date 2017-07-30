@@ -1,7 +1,7 @@
 {
   "author": "Dean Merchant",
   "name": "with-url-state",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "lodash": "4.17.4",
     "query-string": "5.0.0"
@@ -57,7 +57,9 @@
     }
   },
   "license": "MIT",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "dist/withUrlState.js",
   "types": "dist/withUrlState.d.ts",
   "scripts": {
