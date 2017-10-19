@@ -1,4 +1,8 @@
+const { configure } = require('enzyme');
 const { JSDOM } = require('jsdom');
+const Adapter = require('enzyme-adapter-react-16');
+
+configure({ adapter: new Adapter() });
 
 const jsdom = new JSDOM('<!doctype html><html><body></body></html>', {
   url: 'https://example.com',
@@ -16,6 +20,10 @@ global.window = window;
 global.document = window.document;
 global.navigator = {
   userAgent: 'node.js',
+};
+
+global.window.requestAnimationFrame = () => {
+  throw new Error('requestAnimationFrame is not supported in Node');
 };
 
 copyProps(window, global);

@@ -8,6 +8,7 @@ Lifts state out of a react component and into the url
 
 ## Usage
 
+Using javascript
 ```javascript
 import React from 'react';
 import { withUrlState } from 'with-url-state';
@@ -26,6 +27,7 @@ export const UrlForm = ({ setUrlState, urlState }) =>
 export default withUrlState(UrlForm)
 ```
 
+With typescript
 ```typescript
 import * as React from 'react';
 import { withUrlState, UrlStateProps } from 'with-url-state';
