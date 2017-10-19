@@ -1,7 +1,7 @@
 {
   "author": "Dean Merchant",
   "name": "with-url-state",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "dependencies": {
     "lodash": "~4.17.4",
     "query-string": "~5.0.0"
