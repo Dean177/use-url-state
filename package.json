@@ -1,34 +1,36 @@
 {
   "author": "Dean Merchant",
   "name": "with-url-state",
-  "version": "0.0.2",
+  "version": "1.1.0",
   "dependencies": {
-    "lodash": "4.17.4",
-    "query-string": "5.0.0"
+    "lodash": "^4.17.4",
+    "query-string": "^5.0.1"
   },
   "peerDependencies": {
-    "history": "4.6.x",
-    "react": "15.6.x",
-    "react-dom": "15.6.x"
+    "history": "4.6.x || 4.7.x",
+    "react": "15.x || 16.x",
+    "react-dom": "15.x || 16.x"
   },
   "devDependencies": {
-    "@types/enzyme": "2.8.4",
-    "@types/history": "4.6.0",
-    "@types/jest": "20.0.5",
-    "@types/lodash": "4.14.71",
-    "@types/query-string": "5.0.0",
-    "@types/react": "15.6.0",
-    "@types/react-dom": "15.5.1",
+    "@types/enzyme": "3.1.1",
+    "@types/history": "4.6.1",
+    "@types/jest": "21.1.5",
+    "@types/lodash": "4.14.80",
+    "@types/query-string": "5.0.1",
+    "@types/react": "16.0.18",
+    "@types/react-dom": "16.0.2",
     "concurrently": "3.5.0",
-    "enzyme": "2.9.1",
-    "history": "4.6.3",
-    "jest": "20.0.4",
-    "jsdom": "11.1.0",
-    "react": "15.6.1",
-    "react-dom": "15.6.1",
-    "react-test-renderer": "15.6.1",
-    "ts-jest": "20.0.7",
-    "typescript": "2.4.2"
+    "enzyme": "3.1.0",
+    "enzyme-adapter-react-16": "1.0.2",
+    "history": "4.7.2",
+    "jest": "21.2.1",
+    "jsdom": "11.3.0",
+    "react": "16.0.0",
+    "react-dom": "16.0.0",
+    "react-test-renderer": "16.0.0",
+    "ts-jest": "21.1.3",
+    "tslint": "5.8.0",
+    "typescript": "2.5.3"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -63,9 +65,11 @@
   "main": "dist/withUrlState.js",
   "types": "dist/withUrlState.d.ts",
   "scripts": {
-    "build": "rm -rf dist && tsc",
+    "build": "rm -rf dist && tsc && yarn build:docs",
+    "build:docs": "rm -rf docs && cd example && yarn && yarn build && cp -r ./build ../docs",
     "build:dev": "tsc --noEmit --pretty --watch",
     "dev": "concurrently -n \"make,test\" \"npm run build:dev\" \"npm run test:dev\"",
+    "lint": "tslint src/**/*.ts example/src/**.*.tsx",
     "test": "jest --coverage",
     "test:dev": "jest --watch",
     "prepublish": "npm run test && npm run build"

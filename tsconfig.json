@@ -18,6 +18,7 @@
   },
   "exclude": [
     "dist",
+    "example",
     "node_modules",
     "**/*.test.tsx"
   ]

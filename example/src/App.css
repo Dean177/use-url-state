@@ -1,0 +1,30 @@
+body, #root, .UrlForm {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  width: 100%;
+}
+
+.UrlForm {
+  margin: 30px;
+}
+
+.current-state {
+  align-items: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+  height: 100px;
+  margin-bottom: 30px;
+  width: 250px;
+}
+
+.color-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

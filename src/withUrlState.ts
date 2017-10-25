@@ -1,4 +1,4 @@
-import { History, LocationDescriptorObject } from 'history';
+import { History, Location, LocationDescriptorObject, UnregisterCallback } from 'history';
 import { assign } from 'lodash';
 import * as queryString from 'query-string';
 import { Component, ComponentClass, ComponentType, createElement } from 'react';
@@ -11,12 +11,36 @@ export type UrlStateProps<T> = {
   setUrlState: (newState: FlatStringyObject<T>) => void,
   urlState: FlatStringyObject<T>,
 };
+
+export type InternalState = {
+  previousSearch: string,
+};
+
 export const withUrlState =
   <OP, T extends object>(history: History, initialState: FlatStringyObject<T>): Decorator<OP, OP & UrlStateProps<T>> =>
     (WrappedComponent: ComponentType<OP & UrlStateProps<T>>): ComponentClass<OP> =>
-      class WithUrlStateWrapper extends Component<OP> {
+      class WithUrlStateWrapper extends Component<OP, InternalState> {
+        historyListener: UnregisterCallback | null = null;
+        state = {
+          previousSearch: history.location.search,
+        }
+
         componentWillMount() {
           this.setUrlState(initialState as T)
+          this.historyListener = history.listen(this.onLocationChange)
+        }
+
+        componentWillUnmount() {
+          if (this.historyListener) {
+            this.historyListener();
+          }
+        }
+
+        onLocationChange = (location: Location) => {
+          if (location.search != this.state.previousSearch) {
+            this.forceUpdate()
+            this.setState({previousSearch: location.search})
+          }
         }
 
         setUrlState = (newState: T): void => {
@@ -38,6 +62,7 @@ export const withUrlState =
             setUrlState: this.setUrlState,
             urlState: queryString.parse(history.location.search),
           });
+
           return createElement(
             WrappedComponent as ComponentClass<OP & UrlStateProps<T>>,
             enhancedProps,
