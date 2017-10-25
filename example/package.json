@@ -15,6 +15,7 @@
     "@types/react-dom": "16.0.2",
     "react-scripts-ts": "2.8.0"
   },
+  "homepage": "https://dean177.github.io/with-url-state",
   "scripts": {
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
