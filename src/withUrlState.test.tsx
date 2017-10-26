@@ -26,7 +26,7 @@ describe('withUrlState', () => {
       </div>;
 
     UrlConnectedControls =
-      withUrlState<{}, ControlState>(testHistory, { color: 'Red' })(UrlBasedControls);
+      withUrlState<{}, ControlState>(testHistory, () => ({ color: 'Red' }))(UrlBasedControls);
   });
 
   it('sets the url with the initial state', () => {

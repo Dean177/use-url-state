@@ -17,7 +17,7 @@ export type InternalState = {
 };
 
 export const withUrlState =
-  <OP, T extends object>(history: History, initialState: FlatStringyObject<T>): Decorator<OP, OP & UrlStateProps<T>> =>
+  <OP, T extends object>(history: History, getInitialState?: (props: OP) => FlatStringyObject<T>): Decorator<OP, OP & UrlStateProps<T>> =>
     (WrappedComponent: ComponentType<OP & UrlStateProps<T>>): ComponentClass<OP> =>
       class WithUrlStateWrapper extends Component<OP, InternalState> {
         historyListener: UnregisterCallback | null = null;
@@ -26,7 +26,8 @@ export const withUrlState =
         }
 
         componentWillMount() {
-          this.setUrlState(initialState as T)
+          const initialUrlState: T | undefined = getInitialState && getInitialState(this.props)
+          this.setUrlState(assign({}, queryString.parse(history.location.search), initialUrlState))
           this.historyListener = history.listen(this.onLocationChange)
         }
 
@@ -36,7 +37,7 @@ export const withUrlState =
           }
         }
 
-        onLocationChange = (location: Location) => {
+        onLocationChange = (location: Location): void => {
           if (location.search != this.state.previousSearch) {
             this.forceUpdate()
             this.setState({previousSearch: location.search})
