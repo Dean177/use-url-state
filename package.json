@@ -21,7 +21,7 @@
     "@types/react-dom": "16.0.2",
     "concurrently": "3.5.0",
     "enzyme": "3.1.1",
-    "enzyme-adapter-react-16": "1.0.3",
+    "enzyme-adapter-react-16": "1.0.4",
     "history": "4.7.2",
     "jest": "21.2.1",
     "jsdom": "11.3.0",
