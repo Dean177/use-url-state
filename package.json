@@ -20,7 +20,7 @@
     "@types/react": "16.0.20",
     "@types/react-dom": "16.0.2",
     "concurrently": "3.5.0",
-    "enzyme": "3.1.0",
+    "enzyme": "3.1.1",
     "enzyme-adapter-react-16": "1.0.3",
     "history": "4.7.2",
     "jest": "21.2.1",
