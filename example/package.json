@@ -9,9 +9,8 @@
     "with-url-state": "file:.."
   },
   "devDependencies": {
-    "@types/jest": "21.1.5",
     "@types/node": "8.0.47",
-    "@types/react": "16.0.18",
+    "@types/react": "16.0.20",
     "@types/react-dom": "16.0.2",
     "react-scripts-ts": "2.8.0"
   },

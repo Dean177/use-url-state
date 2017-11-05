@@ -1,5 +1,7 @@
 # with-url-state
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/Dean177/with-url-state.svg)](https://greenkeeper.io/)
+
 Lifts state out of a react component and into the url
  
 ## Installation
