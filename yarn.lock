@@ -6,9 +6,9 @@
   version "0.22.2"
   resolved "https://registry.yarnpkg.com/@types/cheerio/-/cheerio-0.22.2.tgz#539625874bc856086ad491c2fdc9b10c05ae308e"
 
-"@types/enzyme@3.1.1":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-3.1.1.tgz#102ebd9aa33fa15fd11477b6f701cde18cbe7de0"
+"@types/enzyme@3.1.3":
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-3.1.3.tgz#e10f3675c28e555cf968e41538b6632a4dede8ae"
   dependencies:
     "@types/cheerio" "*"
     "@types/react" "*"
@@ -21,9 +21,9 @@
   version "21.1.5"
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-21.1.5.tgz#3db93d069d12602ca115d3604550e15131d8eb7a"
 
-"@types/lodash@4.14.80":
-  version "4.14.80"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.80.tgz#a6b8b7900e6a7dcbc2e90d9b6dfbe3f6a7f69951"
+"@types/lodash@4.14.81":
+  version "4.14.81"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.81.tgz#c944b38118615fa54be6cac1ef7ba5326ff70d6e"
 
 "@types/node@*":
   version "8.0.47"
@@ -44,9 +44,9 @@
     "@types/node" "*"
     "@types/react" "*"
 
-"@types/react@*", "@types/react@16.0.18":
-  version "16.0.18"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.0.18.tgz#c08eea79ada55bf10b5353e18c21797dd17afa23"
+"@types/react@*", "@types/react@16.0.20":
+  version "16.0.20"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.0.20.tgz#dc16feb9c0bdf50e439482c6fd3c43d5a1d9f3b1"
 
 abab@^1.0.3:
   version "1.0.3"
@@ -778,20 +778,20 @@ entities@^1.1.1, entities@~1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/entities/-/entities-1.1.1.tgz#6e5c2d0a5621b5dadaecef80b90edfb5cd7772f0"
 
-enzyme-adapter-react-16@1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.0.2.tgz#8c6f431f17c69e1e9eeb25ca4bd92f31971eb2dd"
+enzyme-adapter-react-16@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.0.3.tgz#f40e654f850b62e3ff71639141685e0bb129be34"
   dependencies:
-    enzyme-adapter-utils "^1.0.0"
+    enzyme-adapter-utils "^1.1.0"
     lodash "^4.17.4"
     object.assign "^4.0.4"
     object.values "^1.0.4"
     prop-types "^15.5.10"
     react-test-renderer "^16.0.0-0"
 
-enzyme-adapter-utils@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/enzyme-adapter-utils/-/enzyme-adapter-utils-1.0.1.tgz#fcd81223339a55a312f7552641e045c404084009"
+enzyme-adapter-utils@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/enzyme-adapter-utils/-/enzyme-adapter-utils-1.1.0.tgz#7d765b2e7ebd305899e99b2eb60e77382369d8de"
   dependencies:
     lodash "^4.17.4"
     object.assign "^4.0.4"
@@ -3011,9 +3011,9 @@ trim-right@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
 
-ts-jest@21.1.3:
-  version "21.1.3"
-  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-21.1.3.tgz#cc3c552e7e8a67db9ededc28c00ae98223614ddc"
+ts-jest@21.1.4:
+  version "21.1.4"
+  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-21.1.4.tgz#6b720cd4ebfacbc935468e60dd395392f817095b"
   dependencies:
     babel-core "^6.24.1"
     babel-plugin-istanbul "^4.1.4"
@@ -3024,7 +3024,7 @@ ts-jest@21.1.3:
     jest-util "^21.2.1"
     pkg-dir "^2.0.0"
     source-map-support "^0.5.0"
-    yargs "^9.0.1"
+    yargs "^10.0.3"
 
 tslib@^1.7.1:
   version "1.8.0"
@@ -3068,9 +3068,9 @@ type-check@~0.3.2:
   dependencies:
     prelude-ls "~1.1.2"
 
-typescript@2.5.3:
-  version "2.5.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.5.3.tgz#df3dcdc38f3beb800d4bc322646b04a3f6ca7f0d"
+typescript@2.6.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.6.1.tgz#ef39cdea27abac0b500242d6726ab90e0c846631"
 
 ua-parser-js@^0.7.9:
   version "0.7.14"
@@ -3258,7 +3258,30 @@ yargs-parser@^7.0.0:
   dependencies:
     camelcase "^4.1.0"
 
-yargs@^9.0.0, yargs@^9.0.1:
+yargs-parser@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-8.0.0.tgz#21d476330e5a82279a4b881345bf066102e219c6"
+  dependencies:
+    camelcase "^4.1.0"
+
+yargs@^10.0.3:
+  version "10.0.3"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-10.0.3.tgz#6542debd9080ad517ec5048fb454efe9e4d4aaae"
+  dependencies:
+    cliui "^3.2.0"
+    decamelize "^1.1.1"
+    find-up "^2.1.0"
+    get-caller-file "^1.0.1"
+    os-locale "^2.0.0"
+    require-directory "^2.1.1"
+    require-main-filename "^1.0.1"
+    set-blocking "^2.0.0"
+    string-width "^2.0.0"
+    which-module "^2.0.0"
+    y18n "^3.2.1"
+    yargs-parser "^8.0.0"
+
+yargs@^9.0.0:
   version "9.0.1"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-9.0.1.tgz#52acc23feecac34042078ee78c0c007f5085db4c"
   dependencies:
