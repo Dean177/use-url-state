@@ -12,7 +12,7 @@
     "react-dom": "15.x || 16.x"
   },
   "devDependencies": {
-    "@types/enzyme": "3.1.4",
+    "@types/enzyme": "3.1.5",
     "@types/history": "4.6.2",
     "@types/jest": "21.1.5",
     "@types/lodash": "4.14.83",
