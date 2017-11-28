@@ -25,7 +25,7 @@
     "history": "4.7.2",
     "jest": "21.2.1",
     "jsdom": "11.4.0",
-    "react": "16.1.1",
+    "react": "16.2.0",
     "react-dom": "16.0.0",
     "react-test-renderer": "16.0.0",
     "ts-jest": "21.2.2",
