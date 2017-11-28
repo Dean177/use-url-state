@@ -27,7 +27,7 @@
     "jsdom": "11.4.0",
     "react": "16.1.1",
     "react-dom": "16.0.0",
-    "react-test-renderer": "16.0.0",
+    "react-test-renderer": "16.2.0",
     "ts-jest": "21.2.2",
     "tslint": "5.8.0",
     "typescript": "2.6.1"
