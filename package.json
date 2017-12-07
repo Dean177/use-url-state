@@ -30,7 +30,7 @@
     "react-test-renderer": "16.0.0",
     "ts-jest": "21.2.4",
     "tslint": "5.8.0",
-    "typescript": "2.6.1"
+    "typescript": "2.6.2"
   },
   "jest": {
     "collectCoverageFrom": [
