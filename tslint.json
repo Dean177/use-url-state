@@ -63,10 +63,10 @@
         ],
         "quotemark": [true, "single", "jsx-double"],
         "radix": true,
-        "semicolon": [true, "always"],
+        "semicolon": [true, "never"],
         "switch-default": true,
 
-        "trailing-comma": [false],
+        "trailing-comma": [true],
 
         "triple-equals": [ true, "allow-null-check" ],
         "typedef": [
