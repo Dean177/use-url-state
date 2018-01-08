@@ -1,12 +1,12 @@
-import { createBrowserHistory } from 'history';
-import * as React from 'react';
-import { withUrlState, UrlStateProps } from 'with-url-state';
-import './App.css';
+import { createBrowserHistory } from 'history'
+import * as React from 'react'
+import { withUrlState, UrlStateProps } from 'with-url-state'
+import './App.css'
 
-const history = createBrowserHistory();
+const history = createBrowserHistory()
 
-type OwnProps = {};
-type LiftedState = { color: string };
+type OwnProps = {}
+type LiftedState = { color: string }
 
 export const UrlForm = (props: OwnProps & UrlStateProps<LiftedState>) => (
   <div className="UrlForm">
@@ -25,6 +25,6 @@ export const UrlForm = (props: OwnProps & UrlStateProps<LiftedState>) => (
       </button>
     </div>
   </div>
-);
+)
 
-export default withUrlState<OwnProps, LiftedState>(history, () => ({ color: 'blue' }))(UrlForm);
+export default withUrlState<OwnProps, LiftedState>(history, () => ({ color: 'blue' }))(UrlForm)
