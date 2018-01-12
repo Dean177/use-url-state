@@ -23,7 +23,7 @@ import { withUrlState } from 'with-url-state';
 
 const history = createBrowserHistory();
 
-export const UrlForm = (props: OwnProps & UrlStateProps<LiftedState>) => (
+export const UrlForm = (props) => (
   <div className="UrlForm">
     <div className="current-state" style={{ backgroundColor: props.urlState.color}}>
       <div>{props.urlState.color}</div>
