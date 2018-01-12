@@ -42,7 +42,7 @@ export const UrlForm = (props) => (
   </div>
 );
 
-export default withUrlState<OwnProps, LiftedState>(history, () => ({ color: 'blue' }))(UrlForm);
+export default withUrlState(history, () => ({ color: 'blue' }))(UrlForm);
 ```
 
 Using typescript
