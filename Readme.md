@@ -3,6 +3,7 @@
 [![CircleCI](https://circleci.com/gh/Dean177/with-url-state.svg?style=svg)](https://circleci.com/gh/Dean177/with-url-state)
 [![Greenkeeper badge](https://badges.greenkeeper.io/Dean177/with-url-state.svg)](https://greenkeeper.io/)
 [![Npm](https://badge.fury.io/js/with-url-state.svg)](https://www.npmjs.com/package/with-url-state)
+
 Lifts state out of a react component and into the url
 
 ![color-example](./example/color-example.gif)
