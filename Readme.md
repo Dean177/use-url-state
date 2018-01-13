@@ -14,7 +14,7 @@ Lifts state out of a react component and into the url
 
 ## Usage
 
-Check out the [demo](https://dean177.github.io/with-url-state/) and the [example/](https://github.com/Dean177/with-url-state/tree/master/example) directory
+Check out the [demo](https://dean177.github.io/with-url-state/), the [example/](https://github.com/Dean177/with-url-state/tree/master/example) directory, or play with it in [CodeSandbox](https://codesandbox.io/s/wwlz40ry65).
 
 Using javascript
 
