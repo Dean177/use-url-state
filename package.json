@@ -40,9 +40,6 @@
     "coveragePathIgnorePatterns": [
       "<rootDir>/src/index.ts"
     ],
-    "coverageReporters": [
-      "text"
-    ],
     "mapCoverage": true,
     "moduleFileExtensions": [
       "ts",
