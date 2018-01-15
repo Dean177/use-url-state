@@ -19,6 +19,7 @@
     "@types/query-string": "5.0.1",
     "@types/react": "16.0.21",
     "@types/react-dom": "16.0.3",
+    "codecov": "3.0.0",
     "concurrently": "3.5.1",
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",
@@ -69,10 +70,10 @@
     "build": "rm -rf dist && tsc && yarn build:docs",
     "build:docs": "rm -rf docs && cd example && yarn && yarn build && cp -r ./build ../docs",
     "build:dev": "tsc --noEmit --pretty --watch",
-    "dev": "concurrently -n \"make,test\" \"npm run build:dev\" \"npm run test:dev\"",
+    "dev": "concurrently -n \"build,test\" \"npm run build:dev\" \"npm run test:dev\"",
     "lint": "tslint ./src/**/*.ts ./example/src/**/*.tsx",
-    "test": "jest --coverage",
-    "test:dev": "jest --watch",
-    "prepublish": "npm run test && npm run build"
+    "prepublish": "yarn build && yarn lint && yarn test",
+    "report-coverage": "codecov",
+    "test": "jest"
   }
 }
