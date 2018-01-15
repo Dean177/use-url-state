@@ -1,5 +1,4 @@
 import { History, Location, LocationDescriptorObject, UnregisterCallback } from 'history'
-import { assign } from 'lodash'
 import * as queryString from 'query-string'
 import { Component, ComponentClass, ComponentType, createElement } from 'react'
 
@@ -30,7 +29,10 @@ export const withUrlState =
 
         componentWillMount() {
           const initialUrlState: T | undefined = getInitialState && getInitialState(this.props)
-          this.setUrlState(assign({}, queryString.parse(history.location.search), initialUrlState))
+          this.setUrlState({
+            ...queryString.parse(history.location.search),
+            ...(initialUrlState as any) // tslint:disable-line:no-any Typescript cant handle generic spread yet
+          })
           this.historyListener = history.listen(this.onLocationChange)
         }
 
@@ -48,10 +50,10 @@ export const withUrlState =
         }
 
         setUrlState = (newState: T): void => {
-          const search: string = queryString.stringify(assign({},
-                                                              queryString.parse(history.location.search),
-                                                              newState,
-          ))
+          const search: string = queryString.stringify({
+            ...queryString.parse(history.location.search),
+            ...(newState as any), // tslint:disable-line:no-any Typescript cant handle generic spread yet
+          })
 
           const newLocation: LocationDescriptorObject = {
             ...history.location,
@@ -62,10 +64,11 @@ export const withUrlState =
         }
 
         render() {
-          const enhancedProps = assign({}, this.props, {
+          const enhancedProps = {
+            ...(this.props as any), // tslint:disable-line:no-any Typescript cant handle generic spread yet
             setUrlState: this.setUrlState,
             urlState: queryString.parse(history.location.search),
-          })
+          }
 
           return createElement(
             WrappedComponent as ComponentClass<OP & UrlStateProps<T>>,
