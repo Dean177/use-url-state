@@ -63,11 +63,10 @@
   "main": "dist/withUrlState.js",
   "types": "dist/withUrlState.d.ts",
   "scripts": {
-    "build": "rm -rf dist && tsc && yarn build:docs",
+    "build": "rm -rf dist && tsc --pretty && yarn build:docs",
     "build:docs": "rm -rf docs && cd example && yarn && yarn build && cp -r ./build ../docs",
-    "build:dev": "tsc --noEmit --pretty --watch",
-    "dev": "concurrently -n \"build,test\" \"npm run build:dev\" \"npm run test:dev\"",
-    "lint": "tslint ./src/**/*.ts ./example/src/**/*.tsx",
+    "dev": "tsc --pretty --watch",
+    "lint": "tslint ./src/**/*.ts ./src/**/*.tsx ./example/src/**/*.tsx",
     "prepublish": "yarn build && yarn lint && yarn test",
     "report-coverage": "codecov",
     "test": "jest"

@@ -29,10 +29,12 @@ export const withUrlState =
 
         componentWillMount() {
           const initialUrlState: T | undefined = getInitialState && getInitialState(this.props)
-          this.setUrlState({
+          const mergedUrlState = {
+            ...(initialUrlState as any), // tslint:disable-line:no-any Typescript cant handle generic spread yet
             ...queryString.parse(history.location.search),
-            ...(initialUrlState as any) // tslint:disable-line:no-any Typescript cant handle generic spread yet
-          })
+          }
+
+          this.setUrlState(mergedUrlState)
           this.historyListener = history.listen(this.onLocationChange)
         }
 
@@ -45,7 +47,7 @@ export const withUrlState =
         onLocationChange = (location: Location): void => {
           if (location.search !== this.state.previousSearch) {
             this.forceUpdate()
-            this.setState({previousSearch: location.search})
+            this.setState({ previousSearch: location.search })
           }
         }
 

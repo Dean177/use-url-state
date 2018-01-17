@@ -1,6 +1,6 @@
 import { mount } from 'enzyme'
 import * as React from 'react'
-import { createBrowserHistory, History } from 'history'
+import { createBrowserHistory, History, LocationDescriptorObject } from 'history'
 import * as queryString from 'query-string'
 import { withUrlState, UrlStateProps } from './withUrlState'
 
@@ -14,13 +14,20 @@ describe('withUrlState', () => {
 
   beforeEach(() => {
     testHistory = createBrowserHistory()
+
+    const newLocation: LocationDescriptorObject = {
+      ...testHistory.location,
+      search: queryString.stringify({ color: 'blue' }),
+    }
+    testHistory.replace(newLocation)
+
     UrlBasedControls = (props: UrlStateProps<ControlState>) =>
       <div>
         <div className="currentState">{props.urlState.color}</div>
         <button className="Green" onClick={() => props.setUrlState({ color: 'Green' })}>
           Green
         </button>
-        <button className="Red"onClick={() => props.setUrlState({ color: 'Red' })}>
+        <button className="Red" onClick={() => props.setUrlState({ color: 'Red' })}>
           Red
         </button>
       </div>
