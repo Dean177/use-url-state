@@ -1,7 +1,7 @@
 {
   "author": "Dean Merchant",
   "name": "with-url-state",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "dependencies": {
     "query-string": "^5.0.1"
   },
@@ -65,10 +65,10 @@
   "scripts": {
     "build": "rm -rf dist && tsc --pretty && yarn build:docs",
     "build:docs": "rm -rf docs && cd example && yarn && yarn build && cp -r ./build ../docs",
-    "dev": "tsc --pretty --watch",
     "lint": "tslint ./src/**/*.ts ./src/**/*.tsx ./example/src/**/*.tsx",
     "prepublish": "yarn build && yarn lint && yarn test",
     "report-coverage": "codecov",
+    "start": "tsc --pretty --watch",
     "test": "jest"
   }
 }
