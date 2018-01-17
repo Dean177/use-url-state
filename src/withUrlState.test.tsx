@@ -1,3 +1,4 @@
+// tslint:disable:no-any
 import { mount } from 'enzyme'
 import * as React from 'react'
 import { createBrowserHistory, History, LocationDescriptorObject } from 'history'
@@ -21,7 +22,7 @@ describe('withUrlState', () => {
     }
     testHistory.replace(newLocation)
 
-    UrlBasedControls = (props: UrlStateProps<ControlState>) =>
+    UrlBasedControls = (props: UrlStateProps<ControlState>) => (
       <div>
         <div className="currentState">{props.urlState.color}</div>
         <button className="Green" onClick={() => props.setUrlState({ color: 'Green' })}>
@@ -31,6 +32,7 @@ describe('withUrlState', () => {
           Red
         </button>
       </div>
+    )
 
     UrlConnectedControls =
       withUrlState<{}, ControlState>(testHistory, () => ({ color: 'Red' }))(UrlBasedControls)
