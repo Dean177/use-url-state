@@ -23,7 +23,7 @@
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",
     "history": "4.7.2",
-    "jest": "21.2.1",
+    "jest": "22.0.0",
     "jsdom": "11.4.0",
     "react": "16.2.0",
     "react-dom": "16.1.0",
