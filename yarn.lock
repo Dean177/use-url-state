@@ -3484,9 +3484,9 @@ tslib@^1.8.0, tslib@^1.8.1:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.8.1.tgz#6946af2d1d651a7b1863b531d6e5afa41aa44eac"
 
-tslint-react@3.4.0:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/tslint-react/-/tslint-react-3.4.0.tgz#12ed3fc7063f3df988370206736b50acbce07e59"
+tslint-react@3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/tslint-react/-/tslint-react-3.5.0.tgz#88c13ed92bb6ac14596bdec6767b9be97ced2d3b"
   dependencies:
     tsutils "^2.13.1"
 
