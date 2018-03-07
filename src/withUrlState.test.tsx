@@ -21,55 +21,52 @@ const UrlBasedControls = (props: UrlStateProps<ControlState>) => (
   </div>
 )
 
+const parseQueryString = (qs: string) => queryString.parse(qs);
+const stringifyState = (state: ControlState) => queryString.stringify(state);
+
 describe('withUrlState', () => {
-  let testHistory: History = null as any
-
   beforeEach(() => {
-    testHistory = createBrowserHistory()
-
-    const newLocation: LocationDescriptorObject = {
-      ...testHistory.location,
-      search: queryString.stringify({ color: 'Blue' }),
-    }
-    testHistory.replace(newLocation)
+    const search = queryString.stringify({ color: 'Blue' })
+    
+    window.history.replaceState(window.history.state, '', search)
   })
 
   it('will not override any params which are already provided in the query string', () => {
     const UrlConnectedControls: any =
-      withUrlState<{}, ControlState>(testHistory, () => ({ color: 'Red' }))(UrlBasedControls)
-    expect(queryString.parse(testHistory.location.search)).toEqual({ color: 'Blue' })
+      withUrlState<{}, ControlState>(parseQueryString, stringifyState, () => ({ color: 'Red' }))(UrlBasedControls)
+    expect(parseQueryString(window.location.search)).toEqual({ color: 'Blue' })
 
     const wrapper = mount(<UrlConnectedControls />)
 
-    expect(queryString.parse(testHistory.location.search)).toEqual({ color: 'Blue' })
+    expect(parseQueryString(window.location.search)).toEqual({ color: 'Blue' })
     expect(wrapper.find('.currentColor').text()).toBe('Blue')
   })
 
   it('will append any additional any params which are not provided in the querystring', () => {
     const UrlConnectedControls: any =
-      withUrlState<{}, ControlState>(testHistory, () => ({ animal: 'Ant', color: 'Blue' }))(UrlBasedControls)
-    expect(queryString.parse(testHistory.location.search)).toEqual({ color: 'Blue' })
+      withUrlState<{}, ControlState>(parseQueryString, stringifyState,() => ({ animal: 'Ant', color: 'Blue' }))(UrlBasedControls)
+    expect(queryString.parse(window.location.search)).toEqual({ color: 'Blue' })
 
     const wrapper = mount(<UrlConnectedControls />)
 
-    expect(queryString.parse(testHistory.location.search)).toEqual({ animal: 'Ant', color: 'Blue' })
+    expect(queryString.parse(window.location.search)).toEqual({ animal: 'Ant', color: 'Blue' })
     expect(wrapper.find('.currentAnimal').text()).toBe('Ant')
     expect(wrapper.find('.currentColor').text()).toBe('Blue')
   })
 
   it('sets the url with the initial state', () => {
     const UrlConnectedControls: any =
-      withUrlState<{}, ControlState>(testHistory, () => ({ animal: 'Ant', color: 'Blue' }))(UrlBasedControls)
-    expect(queryString.parse(testHistory.location.search)).toEqual({ color: 'Blue' })
+      withUrlState<{}, ControlState>(parseQueryString, stringifyState,() => ({ animal: 'Ant', color: 'Blue' }))(UrlBasedControls)
+    expect(queryString.parse(window.location.search)).toEqual({ color: 'Blue' })
 
     mount(<UrlConnectedControls />)
 
-    expect(queryString.parse(testHistory.location.search)).toEqual({ animal: 'Ant', color: 'Blue' })
+    expect(queryString.parse(window.location.search)).toEqual({ animal: 'Ant', color: 'Blue' })
   })
 
   it('provides the current urls state to the wrapped component', () => {
     const UrlConnectedControls: any =
-      withUrlState<{}, ControlState>(testHistory, () => ({ animal: 'Ant', color: 'Blue' }))(UrlBasedControls)
+      withUrlState<{}, ControlState>(parseQueryString, stringifyState,() => ({ animal: 'Ant', color: 'Blue' }))(UrlBasedControls)
 
     const wrapper = mount(<UrlConnectedControls />)
 
@@ -79,16 +76,16 @@ describe('withUrlState', () => {
 
   it('updates the url when the wrapped component updates the state', () => {
     const UrlConnectedControls: any =
-      withUrlState<{}, ControlState>(testHistory, () => ({ animal: 'Ant', color: 'Blue' }))(UrlBasedControls)
+      withUrlState<{}, ControlState>(parseQueryString, stringifyState,() => ({ animal: 'Ant', color: 'Blue' }))(UrlBasedControls)
 
     const wrapper = mount(<UrlConnectedControls />)
     expect(wrapper.find('.currentAnimal').text()).toBe('Ant')
     expect(wrapper.find('.currentColor').text()).toBe('Blue')
-    expect(queryString.parse(testHistory.location.search)).toEqual({ animal: 'Ant', color: 'Blue' })
+    expect(queryString.parse(window.location.search)).toEqual({ animal: 'Ant', color: 'Blue' })
 
     wrapper.find('.Green').simulate('click')
     expect(wrapper.find('.currentAnimal').text()).toBe('Ant')
     expect(wrapper.find('.currentColor').text()).toBe('Green')
-    expect(queryString.parse(testHistory.location.search)).toEqual({ animal: 'Ant', color: 'Green' })
+    expect(queryString.parse(window.location.search)).toEqual({ animal: 'Ant', color: 'Green' })
   })
 })

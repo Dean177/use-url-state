@@ -2,27 +2,23 @@
   "author": "Dean Merchant",
   "name": "with-url-state",
   "version": "1.2.1",
-  "dependencies": {
-    "query-string": "^5.0.1"
-  },
+  "dependencies": {},
   "peerDependencies": {
-    "history": "4.6.x || 4.7.x",
     "react": "15.x || 16.x",
     "react-dom": "15.x || 16.x"
   },
   "devDependencies": {
     "@types/enzyme": "3.1.7",
-    "@types/history": "4.6.2",
     "@types/jest": "22.1.2",
     "@types/lodash": "4.14.101",
-    "@types/query-string": "5.0.1",
     "@types/react": "16.0.21",
     "@types/react-dom": "16.0.3",
+    "@types/qs": "6.5.1",
+    "qs": "6.5.1",
     "codecov": "3.0.0",
     "concurrently": "3.5.1",
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",
-    "history": "4.7.2",
     "jest": "21.2.1",
     "jsdom": "11.6.2",
     "react": "16.2.0",
