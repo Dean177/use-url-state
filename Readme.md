@@ -5,13 +5,15 @@
 [![Greenkeeper badge](https://badges.greenkeeper.io/Dean177/with-url-state.svg)](https://greenkeeper.io/)
 [![Npm](https://badge.fury.io/js/with-url-state.svg)](https://www.npmjs.com/package/with-url-state)
 
-Lifts state out of a react component and into the url
+This package allows applications to retrieve the state from a react component and appends it to the url.
 
 ![color-example](./example/color-example.gif)
 
 ## Installation
 
-`yarn add with-url-state` or `npm install with-url-state --save` if using npm
+To install with npm use `npm install with-url-state --save`
+
+To install with yarn use `yarn add with-url-state`
 
 ## Usage
 
@@ -85,9 +87,7 @@ export default withUrlState<OwnProps, LiftedState>(history, (prop: OwnProps) => 
 
 ## Motivation
 
-Being able to have a sharable link which captures the state of a page can be very useful functionality for users.
-
-This commonly occurs when viewing search results, filtering or querying over a data set or even tracking the currently visible portion on a map.
+A link with a specific state embedded into the url is useful for querying data or viewing search results. 
 
 The api provided is:
 - based on [higer-order-components](https://reactjs.org/docs/higher-order-components.html) which makes it composable and testable
