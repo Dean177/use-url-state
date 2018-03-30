@@ -28,7 +28,7 @@ export const withUrlState =
         }
 
         componentWillMount() {
-          const initialUrlState: T | undefined = getInitialState && getInitialState(this.props)
+          const initialUrlState: FlatStringyObject<T> | undefined = getInitialState && getInitialState(this.props)
           const mergedUrlState = {
             ...(initialUrlState as any), // tslint:disable-line:no-any Typescript cant handle generic spread yet
             ...queryString.parse(history.location.search),

@@ -4,15 +4,15 @@
   "private": true,
   "dependencies": {
     "history": "4.7.2",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
+    "react": "^16.3.0",
+    "react-dom": "^16.3.0",
     "with-url-state": "file:.."
   },
   "devDependencies": {
-    "@types/node": "8.0.47",
-    "@types/react": "16.0.20",
-    "@types/react-dom": "16.0.2",
-    "react-scripts-ts": "2.8.0"
+    "@types/node": "9.6.1",
+    "@types/react": "16.1.0",
+    "@types/react-dom": "16.0.4",
+    "react-scripts-ts": "2.14.0"
   },
   "homepage": "https://dean177.github.io/with-url-state",
   "scripts": {

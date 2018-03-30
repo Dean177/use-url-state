@@ -13,25 +13,25 @@
   "devDependencies": {
     "@types/enzyme": "3.1.9",
     "@types/history": "4.6.2",
-    "@types/jest": "22.2.1",
+    "@types/jest": "22.2.2",
     "@types/lodash": "4.14.106",
     "@types/query-string": "5.1.0",
-    "@types/react": "16.0.21",
+    "@types/react": "16.1.0",
     "@types/react-dom": "16.0.4",
     "codecov": "3.0.0",
     "concurrently": "3.5.1",
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",
     "history": "4.7.2",
-    "jest": "21.2.1",
+    "jest": "22.4.3",
     "jsdom": "11.6.2",
     "react": "16.3.0",
     "react-dom": "16.3.0",
     "react-test-renderer": "16.3.0",
     "ts-jest": "22.4.2",
-    "tslint": "5.9.0",
-    "tslint-react": "3.5.0",
-    "typescript": "2.6.2"
+    "tslint": "5.9.1",
+    "tslint-react": "3.5.1",
+    "typescript": "2.8.1"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -40,7 +40,6 @@
     "coveragePathIgnorePatterns": [
       "<rootDir>/src/index.ts"
     ],
-    "mapCoverage": true,
     "moduleFileExtensions": [
       "ts",
       "tsx",
