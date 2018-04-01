@@ -3,7 +3,7 @@
   "name": "with-url-state",
   "version": "1.2.1",
   "dependencies": {
-    "query-string": "^5.0.1"
+    "query-string": "^6.0.0"
   },
   "peerDependencies": {
     "history": "4.6.x || 4.7.x",
