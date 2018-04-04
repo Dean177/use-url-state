@@ -22,6 +22,7 @@ const UrlBasedControls = (props: UrlStateProps<ControlState>) => (
     </button>
   </div>
 )
+
 describe('withUrlState', () => {
   let testHistory: History = null as any
 

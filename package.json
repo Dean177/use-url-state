@@ -3,6 +3,7 @@
   "name": "with-url-state",
   "version": "2.0.0-beta.0",
   "dependencies": {
+    "@types/history": "^4.6.2",
     "query-string": "6.0.0"
   },
   "peerDependencies": {
@@ -12,7 +13,6 @@
   },
   "devDependencies": {
     "@types/enzyme": "3.1.9",
-    "@types/history": "4.6.2",
     "@types/jest": "22.2.2",
     "@types/lodash": "4.14.106",
     "@types/qs": "6.5.1",
