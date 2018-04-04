@@ -149,7 +149,7 @@ describe('withUrlState', () => {
           min_price?: number,
           max_price?: number,
         }
-        const defaultSort: SortOptions = 'BEST_MATCH';
+        const defaultSort: SortOptions = 'BEST_MATCH'
         const defaultQueryParameters: QueryParams = {
           q: 'Winchester',
           page: 1,
@@ -158,54 +158,54 @@ describe('withUrlState', () => {
 
         const sortAlphabeticalWithQFirst = (a: string, b: string): number => {
           if (a < b || a === 'q') {
-            return -1;
+            return -1
           } else if (a > b || b === 'q') {
-            return 1;
+            return 1
           } else {
-            return 0;
+            return 0
           }
-        };
+        }
 
         const config: Config<QueryParams> = {
           history: testHistory,
           serialisation: {
-            parse: (queryString: string): QueryParams => {
-              const stringyParams = qs.parse(queryString, { ignoreQueryPrefix: true });
+            parse: (queryStr: string): QueryParams => {
+              const stringyParams = qs.parse(queryStr, { ignoreQueryPrefix: true })
               if (typeof stringyParams === 'object') {
                 const pageFromQuery = (typeof stringyParams.page === 'string')
                   ? parseInt(stringyParams.page, 10)
-                  : undefined;
+                  : undefined
 
-                const maxPriceAsNumber = parseInt(stringyParams.max_price || '', 10);
-                const minPriceAsNumber = parseInt(stringyParams.min_price || '', 10);
+                const maxPriceAsNumber = parseInt(stringyParams.max_price || '', 10)
+                const minPriceAsNumber = parseInt(stringyParams.min_price || '', 10)
                 return {
                   q: stringyParams.q || defaultQueryParameters.q,
                   page: pageFromQuery !== undefined && !isNaN(pageFromQuery) ? pageFromQuery : 1,
                   sort: stringyParams.sort as SortOptions || defaultSort,
                   max_price: !isNaN(maxPriceAsNumber) ? maxPriceAsNumber : undefined,
                   min_price: !isNaN(minPriceAsNumber) ? minPriceAsNumber : undefined,
-                };
+                }
               } else {
-                return defaultQueryParameters;
+                return defaultQueryParameters
               }
             },
             stringify: (state: Partial<QueryParams>) => {
-              const { max_price, min_price } = state;
+              const { max_price, min_price } = state
               const minAndMaxPrice = min_price && max_price
                 ? { max_price, min_price }
-                : { max_price: undefined, min_price: undefined };
+                : { max_price: undefined, min_price: undefined }
               const filteredState = {
                 q: state.q ? state.q : defaultQueryParameters.q,
                 page: state.page === 1 ? undefined : state.page,
                 sort: state.sort === defaultSort ? undefined : state.sort,
                 ...minAndMaxPrice,
-              };
+              }
 
               return qs.stringify(filteredState, {
                 addQueryPrefix: true,
                 format: 'RFC1738',
                 sort: sortAlphabeticalWithQFirst,
-              });
+              })
             },
           },
         }
