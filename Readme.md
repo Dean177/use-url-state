@@ -28,11 +28,8 @@ Check out the [demo](https://dean177.github.io/with-url-state/), the [example/](
 Using javascript
 
 ```javascript
-import { createBrowserHistory } from 'history';
 import React from 'react';
 import { withUrlState } from 'with-url-state';
-
-const history = createBrowserHistory();
 
 export const UrlForm = (props) => (
   <div className="UrlForm">
@@ -53,17 +50,15 @@ export const UrlForm = (props) => (
   </div>
 );
 
-export default withUrlState(history, (props) => ({ color: 'blue' }))(UrlForm);
+export default withUrlState((props) => ({ color: 'blue' }))(UrlForm);
 ```
 
 Using typescript
 
 ```typescript
-import { createBrowserHistory } from 'history';
 import * as React from 'react';
 import { withUrlState, UrlStateProps } from 'with-url-state';
 
-const history = createBrowserHistory();
 
 type OwnProps = {};
 type LiftedState = { color: string };
@@ -87,7 +82,7 @@ export const UrlForm = (props: OwnProps & UrlStateProps<LiftedState>) => (
   </div>
 );
 
-export default withUrlState<OwnProps, LiftedState>(history, (prop: OwnProps) => ({ color: 'blue' }))(UrlForm);
+export default withUrlState<OwnProps, LiftedState>((prop: OwnProps) => ({ color: 'blue' }))(UrlForm);
 
 ```
 
@@ -95,7 +90,7 @@ export default withUrlState<OwnProps, LiftedState>(history, (prop: OwnProps) => 
 
 `with-url-state` automates the query parameter manipulations, simplifying URL sharing for search results, querying data or tracking a visible portion of a map.
 
-The api provided is:
+The api provided is:****
 - based on [higer-order-components](https://reactjs.org/docs/higher-order-components.html) which makes it composable and testable
 - type-safe thanks to [Typescript](https://www.typescriptlang.org/)   
 - very similar to [Reacts built in state](https://reactjs.org/docs/state-and-lifecycle.html) apis, so converting a component which already manages state is usually as simple as replacing `setState` with `setUrlState`!
