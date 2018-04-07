@@ -29,7 +29,8 @@ export type HistoryAdapter = {
     hash: Hash,
   },
   listen: (listener: LocationListener) => UnregisterCallback,
-  replace: (location: LocationDescriptorObject) => void;
+  push: (location: LocationDescriptorObject) => void,
+  replace: (location: LocationDescriptorObject) => void,
 }
 
 export const html5HistoryAdapter: HistoryAdapter = {
@@ -39,6 +40,8 @@ export const html5HistoryAdapter: HistoryAdapter = {
       window.removeEventListener('popstate', listener as () => void)
   },
   location: window.location,
+  push: ({ search }: LocationDescriptorObject) =>
+    history.pushState(history.state, document.title, '?' + search),
   replace: ({ search }: LocationDescriptorObject) =>
     history.replaceState(history.state, document.title, '?' + search),
 }
@@ -47,18 +50,19 @@ export type Parse<T> = (queryString: string) => Partial<T>
 
 export type Stringify<T> = (state: Partial<T>) => string
 
-export type Config<T> = {
+export type Config<OP, T> = {
   history?: HistoryAdapter,
   serialisation?: {
     parse: Parse<T>,
     stringify: Stringify<T>,
   },
+  shouldPushState?: (props: OP, next: Partial<T>, current: Partial<T>) => boolean
 }
 
 export const withUrlState =
   <OP, T extends object>(
     getInitialState?: (props: OP) => T,
-    config?: Config<T>,
+    config?: Config<OP, T>,
   ): Decorator<OP, OP & UrlStateProps<T>> => {
     const history = config && config.history
       ? config.history
@@ -113,10 +117,16 @@ export const withUrlState =
             ...(newState as any), // tslint:disable-line:no-any
           } as Partial<T>)
 
-          history.replace({
+          const nextLocation = {
             ...history.location,
             search,
-          })
+          }
+
+          config &&
+          config.shouldPushState &&
+          config.shouldPushState(this.props, newState, parse(this.state.previousSearch))
+            ? history.push(nextLocation)
+            : history.replace(nextLocation)
 
           this.onLocationChange()
         }

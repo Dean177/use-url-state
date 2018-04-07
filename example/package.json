@@ -4,15 +4,15 @@
   "private": true,
   "dependencies": {
     "history": "4.7.2",
-    "react": "^16.3.0",
-    "react-dom": "^16.3.0",
+    "react": "^16.3.1",
+    "react-dom": "^16.3.1",
     "react-router-dom": "4.2.2",
     "with-url-state": "file:.."
   },
   "devDependencies": {
     "@types/history": "4.6.2",
-    "@types/node": "9.6.1",
-    "@types/react": "16.3.2",
+    "@types/node": "9.6.2",
+    "@types/react": "16.3.5",
     "@types/react-dom": "16.0.4",
     "@types/react-router-dom": "4.2.6",
     "react-scripts-ts": "2.14.0",

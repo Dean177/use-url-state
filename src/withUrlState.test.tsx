@@ -1,10 +1,10 @@
 // tslint:disable:no-any
 import { mount } from 'enzyme'
-import { createBrowserHistory, History, LocationDescriptorObject } from 'history'
-import createMemoryHistory from 'history/createMemoryHistory'
-import * as queryString from 'query-string'
+import { createBrowserHistory, createMemoryHistory, History, LocationDescriptorObject } from 'history'
+import { flow } from 'lodash'
 import * as qs from 'qs'
-import * as React from 'react'
+import * as queryString from 'query-string'
+import React, { ComponentType } from 'react'
 import { withUrlState, UrlStateProps, Config } from './withUrlState'
 
 type ControlState = { animal?: string, color: string }
@@ -23,12 +23,18 @@ const UrlBasedControls = (props: UrlStateProps<ControlState>) => (
   </div>
 )
 
+const propInterceptor = <OP extends {}>(onRender: (props: OP) => void) =>
+  (WrappedComponent: ComponentType<OP>): ComponentType<OP> =>
+    (props: OP) => {
+      onRender(props)
+      return (<WrappedComponent {...props} />)
+    }
+
 describe('withUrlState', () => {
   let testHistory: History = null as any
 
   beforeEach(() => {
     testHistory = createBrowserHistory()
-
     const newLocation: LocationDescriptorObject = {
       ...testHistory.location,
       search: queryString.stringify({ color: 'Blue' }),
@@ -37,7 +43,7 @@ describe('withUrlState', () => {
   })
 
   it('will not override any params which are already provided in the query string', () => {
-    const UrlConnectedControls: any =
+    const UrlConnectedControls =
       withUrlState<{}, ControlState>(() => ({ color: 'Red' }), { history: testHistory })(UrlBasedControls)
 
     expect(queryString.parse(window.location.search)).toEqual({ color: 'Blue' })
@@ -49,7 +55,7 @@ describe('withUrlState', () => {
   })
 
   it('will append any additional any params which are not provided in the querystring', () => {
-    const UrlConnectedControls: any =
+    const UrlConnectedControls =
       withUrlState<{}, ControlState>(
         () => ({ animal: 'Ant', color: 'Blue' }),
         { history: testHistory },
@@ -64,7 +70,7 @@ describe('withUrlState', () => {
   })
 
   it('sets the url with the initial state', () => {
-    const UrlConnectedControls: any =
+    const UrlConnectedControls =
       withUrlState<{}, ControlState>(
         () => ({ animal: 'Ant', color: 'Blue' }),
         { history: testHistory },
@@ -77,7 +83,7 @@ describe('withUrlState', () => {
   })
 
   it('provides the current urls state to the wrapped component', () => {
-    const UrlConnectedControls: any =
+    const UrlConnectedControls =
       withUrlState<{}, ControlState>(
         () => ({ animal: 'Ant', color: 'Blue' }),
         { history: testHistory },
@@ -90,7 +96,7 @@ describe('withUrlState', () => {
   })
 
   it('updates the url when the wrapped component updates the state', () => {
-    const UrlConnectedControls: any =
+    const UrlConnectedControls =
       withUrlState<{}, ControlState>(
         () => ({ animal: 'Ant', color: 'Blue' }),
         { history: testHistory },
@@ -108,10 +114,34 @@ describe('withUrlState', () => {
   })
 
   describe('config', () => {
+    describe('shouldPushState', () => {
+      it('takes a predicate used to decide if the new search is pushed or replaced', () => {
+        const propSpy = jest.fn()
+        const memoryHistory = createMemoryHistory()
+        const UrlConnectedControls = flow(
+          propInterceptor((props: UrlStateProps<ControlState>) => propSpy(props)),
+          withUrlState<{}, ControlState>(
+            () => ({ color: 'Red' }),
+            {
+              history: memoryHistory,
+              shouldPushState: () => true,
+            }
+          )
+        )(UrlBasedControls)
+
+        mount(<UrlConnectedControls/>)
+        const { setUrlState } = propSpy.mock.calls[0][0]
+        setUrlState({ color: 'Green' })
+        setUrlState({ color: 'Blue' })
+        expect(memoryHistory.action).toBe('PUSH')
+        expect(memoryHistory.entries.length).toBe(3)
+      })
+    })
+
     describe('history', () => {
       it('can accept a history provider to use alternate implementations', () => {
         const memoryHistory = createMemoryHistory()
-        const UrlConnectedControls: any =
+        const UrlConnectedControls =
           withUrlState<{}, ControlState>(() => ({ color: 'Red' }), { history: memoryHistory })(UrlBasedControls)
 
         const wrapper = mount(<UrlConnectedControls/>)
@@ -131,7 +161,7 @@ describe('withUrlState', () => {
             stringify: qs.stringify,
           },
         }
-        const UrlConnectedControls: any =
+        const UrlConnectedControls =
           withUrlState<{}, ControlState>(() => ({ color: 'Red' }), config)(UrlBasedControls)
         expect(queryString.parse(testHistory.location.search)).toEqual({ color: 'Blue' })
 
@@ -167,7 +197,7 @@ describe('withUrlState', () => {
           }
         }
 
-        const config: Config<QueryParams> = {
+        const config: Config<{}, QueryParams> = {
           history: testHistory,
           serialisation: {
             parse: (queryStr: string): QueryParams => {
