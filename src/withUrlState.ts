@@ -124,7 +124,7 @@ export const withUrlState =
 
           config &&
           config.shouldPushState &&
-          config.shouldPushState(this.props, newState, parse(this.state.previousSearch))
+          config.shouldPushState(this.props, parse(search), parse(this.state.previousSearch))
             ? history.push(nextLocation)
             : history.replace(nextLocation)
 

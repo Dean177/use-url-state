@@ -136,6 +136,39 @@ describe('withUrlState', () => {
         expect(memoryHistory.action).toBe('PUSH')
         expect(memoryHistory.entries.length).toBe(3)
       })
+      
+      it('allows comparison of the *parsed* state to be applied and the current state', () => {
+        const parse = (str: string): Partial<ControlState> => {
+          const state = qs.parse(str, { ignoreQueryPrefix: true })
+          return { ...state, animal: state.animal || 'Empty' }
+        }
+        const stringify = (state: Partial<ControlState>) => {
+          const { color, animal } = state
+          const filteredState = { color, animal: animal === 'Empty' ? undefined : animal }
+          return qs.stringify(filteredState)
+        }
+        const shouldPushState = jest.fn()
+        
+        const config = {
+          history: testHistory,
+          shouldPushState,
+          serialisation: { parse, stringify },
+        }
+        
+        const propSpy = jest.fn()
+        const UrlConnectedControls = flow(
+          propInterceptor((props: UrlStateProps<ControlState>) => propSpy(props)),
+          withUrlState<{}, ControlState>(() => ({}), config)
+        )(UrlBasedControls)
+    
+        mount(<UrlConnectedControls/>)
+        const { setUrlState } = propSpy.mock.calls[0][0]
+        setUrlState({ animal: 'Cat' , otherErroneousParam: 'foo' })
+        
+        const next = { color: 'Blue', animal: 'Cat' }
+        const current = { color: 'Blue', animal: 'Empty' }
+        expect(shouldPushState).toBeCalledWith({}, next, current)
+      })
     })
 
     describe('history', () => {
