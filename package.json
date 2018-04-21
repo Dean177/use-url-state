@@ -1,8 +1,10 @@
 {
   "author": "Dean Merchant",
-  "contributors": ["Matt Hawes <hawes.info@gmail.com> (https://github.com/MGHawes)"],
+  "contributors": [
+    "Matt Hawes <hawes.info@gmail.com> (https://github.com/MGHawes)"
+  ],
   "name": "with-url-state",
-  "version": "2.0.0-beta.3",
+  "version": "2.0.0-beta.4",
   "dependencies": {
     "@types/history": "^4.6.2",
     "qs": "6.5.1"
