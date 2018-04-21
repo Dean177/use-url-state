@@ -6,7 +6,7 @@ import {
   Search,
   UnregisterCallback,
 } from 'history'
-import * as queryString from 'query-string'
+import * as qs from 'qs'
 import { Component, ComponentClass, ComponentType, createElement } from 'react'
 
 type Decorator<Props, EnhancedProps> = (component: ComponentType<EnhancedProps>) => ComponentType<Props>
@@ -70,11 +70,11 @@ export const withUrlState =
 
     const parse: Parse<T> = config && config.serialisation && config.serialisation.parse
       ? config.serialisation.parse
-      : queryString.parse
+      : (queryString: string) => qs.parse(queryString, { ignoreQueryPrefix: true })
 
     const stringify: Stringify<T> = config && config.serialisation && config.serialisation.stringify
       ? config.serialisation.stringify
-      : queryString.stringify
+      : (state: Partial<T>) => qs.stringify(state, { addQueryPrefix: true })
 
     return (WrappedComponent: ComponentType<OP & UrlStateProps<T>>): ComponentClass<OP> =>
       class WithUrlStateWrapper extends Component<OP, InternalState<T>> {

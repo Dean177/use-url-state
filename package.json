@@ -1,10 +1,11 @@
 {
   "author": "Dean Merchant",
+  "contributors": ["Matt Hawes <hawes.info@gmail.com> (https://github.com/MGHawes)"],
   "name": "with-url-state",
   "version": "2.0.0-beta.3",
   "dependencies": {
     "@types/history": "^4.6.2",
-    "query-string": "6.0.0"
+    "qs": "6.5.1"
   },
   "peerDependencies": {
     "history": "4.6.x || 4.7.x",
@@ -26,7 +27,7 @@
     "history": "4.7.2",
     "jest": "22.4.0",
     "jsdom": "11.7.0",
-    "qs": "6.5.1",
+    "query-string": "6.0.0",
     "react": "16.3.1",
     "react-dom": "16.3.1",
     "react-test-renderer": "16.3.1",
