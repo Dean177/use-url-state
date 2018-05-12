@@ -41,9 +41,9 @@ export const html5HistoryAdapter: HistoryAdapter = {
   },
   location: window.location,
   push: ({ search }: LocationDescriptorObject) =>
-    history.pushState(history.state, document.title, '?' + search),
+    window.history.pushState(window.history.state, document.title, search),
   replace: ({ search }: LocationDescriptorObject) =>
-    history.replaceState(history.state, document.title, '?' + search),
+    window.history.replaceState(window.history.state, document.title, search),
 }
 
 export type Parse<T> = (queryString: string) => Partial<T>
@@ -74,7 +74,7 @@ export const withUrlState =
 
     const stringify: Stringify<T> = config && config.serialisation && config.serialisation.stringify
       ? config.serialisation.stringify
-      : (state: Partial<T>) => qs.stringify(state, { addQueryPrefix: true })
+      : (state: Partial<T>) => qs.stringify(state, { addQueryPrefix: false })
 
     return (WrappedComponent: ComponentType<OP & UrlStateProps<T>>): ComponentClass<OP> =>
       class WithUrlStateWrapper extends Component<OP, InternalState<T>> {

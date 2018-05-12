@@ -12,6 +12,7 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "outDir": "dist",
+    "pretty": true,
     "rootDir": "src",
     "sourceMap": false,
     "strict": true,

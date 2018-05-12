@@ -4,13 +4,12 @@
     "Matt Hawes <hawes.info@gmail.com> (https://github.com/MGHawes)"
   ],
   "name": "with-url-state",
-  "version": "2.0.0-beta.4",
+  "version": "2.0.0-beta.5",
   "dependencies": {
     "@types/history": "^4.6.2",
     "qs": "6.5.1"
   },
   "peerDependencies": {
-    "history": "4.6.x || 4.7.x",
     "react": "15.x || 16.x",
     "react-dom": "15.x || 16.x"
   },
@@ -29,6 +28,7 @@
     "history": "4.7.2",
     "jest": "22.4.0",
     "jsdom": "11.7.0",
+    "props-interceptor": "1.0.1",
     "query-string": "6.0.0",
     "react": "16.3.1",
     "react-dom": "16.3.1",
@@ -67,12 +67,12 @@
   "main": "dist/withUrlState.js",
   "types": "dist/withUrlState.d.ts",
   "scripts": {
-    "build": "rm -rf dist && tsc --pretty && yarn build:docs",
+    "build": "rm -rf dist && tsc && yarn build:docs",
     "build:docs": "rm -rf docs && cd example && yarn && yarn build && cp -r ./build ../docs",
     "lint": "tslint ./src/**/*.ts ./src/**/*.tsx ./example/src/**/*.tsx",
-    "prepublish": "yarn build && yarn lint && yarn test",
+    "prepublishOnly": "yarn build && yarn lint && yarn test",
     "report-coverage": "codecov",
-    "start": "tsc --pretty --watch",
+    "start": "tsc --watch",
     "test": "jest"
   }
 }

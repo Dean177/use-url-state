@@ -1,14 +1,21 @@
 // tslint:disable:no-any
 import { mount } from 'enzyme'
-import { createBrowserHistory, createMemoryHistory, History, LocationDescriptorObject } from 'history'
+import {
+  createBrowserHistory,
+  createMemoryHistory,
+  History,
+  LocationDescriptorObject,
+  LocationListener,
+} from 'history'
 import { flow } from 'lodash'
-import * as qs from 'qs'
-import * as queryString from 'query-string'
-import React, { ComponentType } from 'react'
-import { withUrlState, UrlStateProps, Config, Parse, Stringify } from './withUrlState'
+import { interceptor } from 'props-interceptor'
+import qs from 'qs'
+import queryString from 'query-string'
+import React from 'react'
+import { HistoryAdapter, withUrlState, UrlStateProps, Config, Parse, Stringify, html5HistoryAdapter } from './withUrlState'
 
 type ControlState = { animal?: string, color: string }
-declare const global: { window: any }
+declare const global: { window: Window }
 
 const UrlBasedControls = (props: UrlStateProps<ControlState>) => (
   <div>
@@ -22,13 +29,6 @@ const UrlBasedControls = (props: UrlStateProps<ControlState>) => (
     </button>
   </div>
 )
-
-const propInterceptor = <OP extends {}>(onRender: (props: OP) => void) =>
-  (WrappedComponent: ComponentType<OP>): ComponentType<OP> =>
-    (props: OP) => {
-      onRender(props)
-      return (<WrappedComponent {...props} />)
-    }
 
 const parseQueryString: Parse<ControlState> = str => qs.parse(str, { ignoreQueryPrefix: true })
 const stringifyState: Stringify<ControlState> = state => qs.stringify(state, { addQueryPrefix: true })
@@ -122,7 +122,7 @@ describe('withUrlState', () => {
         const propSpy = jest.fn()
         const memoryHistory = createMemoryHistory()
         const UrlConnectedControls = flow(
-          propInterceptor((props: UrlStateProps<ControlState>) => propSpy(props)),
+          interceptor((props: UrlStateProps<ControlState>) => propSpy(props)),
           withUrlState<{}, ControlState>(
             () => ({ color: 'Red' }),
             {
@@ -160,8 +160,8 @@ describe('withUrlState', () => {
         
         const propSpy = jest.fn()
         const UrlConnectedControls = flow(
-          propInterceptor((props: UrlStateProps<ControlState>) => propSpy(props)),
-          withUrlState<{}, ControlState>(() => ({}), config)
+          interceptor((props: UrlStateProps<ControlState>) => propSpy(props)),
+          withUrlState<{}, ControlState>(() => ({ animal: 'bear', color: 'blue'}), config)
         )(UrlBasedControls)
     
         mount(<UrlConnectedControls/>)
@@ -186,6 +186,31 @@ describe('withUrlState', () => {
         expect(wrapper.find('.currentColor').text()).toBe('Red')
         expect(memoryHistory.entries.length).toBe(1)
       })
+
+      it('calls the unsubscribe of the HistoryAdapter when the component is unmounted', () => {
+        const unsubscribeCallback = jest.fn()
+        const unsubscribeHistory: HistoryAdapter = {
+          location: {
+            pathname: 'pathname',
+            search: '?search',
+            hash: '',
+          },
+          listen: (listener: LocationListener) => unsubscribeCallback,
+          push: (location: LocationDescriptorObject) => {}, // tslint:disable-line
+          replace: (location: LocationDescriptorObject) => {}, // tslint:disable-line
+        }
+
+        const UrlConnectedControls =
+          withUrlState<{}, ControlState>(
+            () => ({ animal: 'Ant', color: 'Blue' }),
+            { history: unsubscribeHistory },
+          )(UrlBasedControls)
+
+        const wrapper = mount(<UrlConnectedControls/>)
+        wrapper.unmount()
+
+        expect(unsubscribeCallback).toHaveBeenCalled()
+      })
     })
 
     describe('serialisation', () => {
@@ -207,7 +232,7 @@ describe('withUrlState', () => {
         expect(wrapper.find('.currentColor').text()).toBe('Blue')
       })
 
-      it('can support complex serialisation workflows', () => {
+      it('supports complex serialisation workflows', () => {
         type SortOptions = 'BEST_MATCH' | 'NEWLY_LISTED' | 'NEARBY' | 'ENDING_SOON' | 'HIGHEST_PAY' | 'LOWEST_PAY'
         type QueryParams = {
           q: string,
@@ -318,6 +343,54 @@ describe('withUrlState', () => {
         expect(wrapper.find('.q').text()).toBe('Winchester')
         expect(wrapper.find('.sort').text()).toBe('NEARBY')
       })
+    })
+  })
+
+  describe('html5HistoryAdapter', () => {
+    const listener = () => {} // tslint:disable-line
+    let addTemp = window.addEventListener
+    let removeTemp = window.removeEventListener
+    let historyPushTemp = window.history.pushState
+    let historyReplaceTemp = window.history.replaceState
+
+    beforeEach(() => {
+      window.addEventListener = jest.fn()
+      window.removeEventListener = jest.fn()
+      window.history.pushState = jest.fn()
+      window.history.replaceState = jest.fn()
+    })
+
+    afterEach(() => {
+      window.addEventListener = addTemp
+      window.removeEventListener = removeTemp
+      window.history.pushState = historyPushTemp
+      window.history.replaceState = historyReplaceTemp
+    })
+
+    it(`registers itself as an event listener of 'popstate'`, () => {
+
+      html5HistoryAdapter.listen(listener)
+      expect(window.addEventListener).toHaveBeenCalledWith('popstate', listener)
+    })
+
+    it(`returns a callback which will remove itself as an event listener of 'popstate'`, () => {
+      const unsubscribe = html5HistoryAdapter.listen(listener)
+      unsubscribe()
+      expect(window.removeEventListener).toHaveBeenCalledWith('popstate', listener)
+    })
+
+    it(`defers to the 'history' global when pushing an event`, () => {
+      html5HistoryAdapter.listen(listener)
+      html5HistoryAdapter.push({ search: 'foo=bar' })
+
+      expect(window.history.pushState).toHaveBeenCalled()
+    })
+
+    it(`defers to the 'history' global when replacing an event`, () => {
+      html5HistoryAdapter.listen(listener)
+      html5HistoryAdapter.replace({ search: 'foo=bar' })
+
+      expect(window.history.replaceState).toHaveBeenCalled()
     })
   })
 })

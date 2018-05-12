@@ -5,8 +5,6 @@ import { Router, Link, Route, Switch } from 'react-router-dom'
 import { html5HistoryAdapter, withUrlState, UrlStateProps } from 'with-url-state'
 import './App.css'
 
-const history = createBrowserHistory()
-
 type OwnProps = {}
 type LiftedState = { color: string }
 
@@ -31,6 +29,8 @@ export const UrlForm = (props: OwnProps & UrlStateProps<LiftedState>) => (
 
 const Html = withUrlState<OwnProps, LiftedState>(() => ({ color: 'blue' }), { history: html5HistoryAdapter })(UrlForm)
 
+const history = createBrowserHistory()
+
 const Npm = withUrlState<OwnProps, LiftedState>(() => ({ color: 'red' }), { history })(UrlForm)
 
 const CustomSerialisation = withUrlState<OwnProps, LiftedState>(
@@ -43,12 +43,13 @@ const CustomSerialisation = withUrlState<OwnProps, LiftedState>(
         return ({
           color: search === '?c=blue' ? 'blue' :
             search === '?c=green' ? 'green' :
-              search === '?c=red' ? 'red' : undefined
+              search === '?c=red' ? 'red' : 'blue'
         })
       },
-      stringify: ({ color }: LiftedState) =>
-        color === 'blue' ? 'c=blue' :
-          color === 'green' ? 'c=green' : 'c=red',
+      stringify: ({ color }: Partial<LiftedState>) =>
+        color === 'blue' ? '?c=blue' :
+          color === 'green' ? '?c=green' :
+            '?c=red',
     }
   }
 )(UrlForm)

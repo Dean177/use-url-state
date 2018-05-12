@@ -23,15 +23,17 @@ To install with yarn use
 
 ## Usage
 
-Check out the [demo](https://dean177.github.io/with-url-state/), the [example/](https://github.com/Dean177/with-url-state/tree/master/example) directory, or play with it in [CodeSandbox](https://codesandbox.io/s/wwlz40ry65).
+Check out the [demo](https://dean177.github.io/with-url-state/), the [example/](https://github.com/Dean177/with-url-state/tree/master/example) directory, or play with it in [CodeSandbox](https://codesandbox.io/s/21z35p6pjp).
 
 Using javascript
 
 ```javascript
-import React from 'react';
-import { withUrlState } from 'with-url-state';
+import React fr****om 'react';
+import { withUrlState } from 'with-url-state'
 
-export const UrlForm = (props) => (
+const enhance = withUrlState((props) => ({ color: 'blue' }))
+
+export const UrlForm = enhance((props) => (
   <div className="UrlForm">
     <div className="current-state" style={{ backgroundColor: props.urlState.color}}>
       <div>{props.urlState.color}</div>
@@ -48,22 +50,21 @@ export const UrlForm = (props) => (
       </button>
     </div>
   </div>
-);
-
-export default withUrlState((props) => ({ color: 'blue' }))(UrlForm);
+))
 ```
 
 Using typescript
 
-```typescript
-import * as React from 'react';
-import { withUrlState, UrlStateProps } from 'with-url-state';
+```typescript jsx
+import * as React from 'react'
+import { withUrlState, UrlStateProps } from 'with-url-state'
 
+type OwnProps = {}
+type UrlState = { color: string }
 
-type OwnProps = {};
-type LiftedState = { color: string };
+const enhance = withUrlState<OwnProps, UrlState>((prop: OwnProps) => ({ color: 'blue' }))
 
-export const UrlForm = (props: OwnProps & UrlStateProps<LiftedState>) => (
+export const UrlForm = enhance((props: OwnProps & UrlStateProps<UrlState>) => (
   <div className="UrlForm">
     <div className="current-state" style={{ backgroundColor: props.urlState.color}}>
       <div>{props.urlState.color}</div>
@@ -80,9 +81,7 @@ export const UrlForm = (props: OwnProps & UrlStateProps<LiftedState>) => (
       </button>
     </div>
   </div>
-);
-
-export default withUrlState<OwnProps, LiftedState>((prop: OwnProps) => ({ color: 'blue' }))(UrlForm);
+))
 
 ```
 
