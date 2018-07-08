@@ -14,7 +14,7 @@
     "@types/enzyme": "3.1.10",
     "@types/history": "4.6.2",
     "@types/jest": "22.2.3",
-    "@types/lodash": "4.14.107",
+    "@types/lodash": "4.14.109",
     "@types/query-string": "5.1.0",
     "@types/react": "16.3.3",
     "@types/react-dom": "16.0.6",
