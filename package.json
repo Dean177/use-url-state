@@ -21,7 +21,7 @@
     "codecov": "3.0.4",
     "concurrently": "3.6.0",
     "enzyme": "3.4.2",
-    "enzyme-adapter-react-16": "1.1.1",
+    "enzyme-adapter-react-16": "1.2.0",
     "history": "4.7.2",
     "jest": "22.4.3",
     "jsdom": "11.9.0",
