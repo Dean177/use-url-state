@@ -9,12 +9,12 @@
     "with-url-state": "file:.."
   },
   "devDependencies": {
-    "@types/history": "4.6.2",
-    "@types/node": "9.6.1",
-    "@types/react": "16.3.2",
-    "@types/react-dom": "16.0.4",
-    "react-scripts-ts": "2.14.0",
-    "typescript": "2.8.1"
+    "@types/history": "4.7.0",
+    "@types/node": "10.11.4",
+    "@types/react": "16.4.16",
+    "@types/react-dom": "16.0.8",
+    "react-scripts-ts": "3.1.0",
+    "typescript": "3.1.1"
   },
   "homepage": "https://dean177.github.io/with-url-state",
   "scripts": {
