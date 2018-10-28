@@ -4,7 +4,7 @@
     "Matt Hawes <hawes.info@gmail.com> (https://github.com/MGHawes)"
   ],
   "name": "with-url-state",
-  "version": "2.0.0-beta.6",
+  "version": "2.0.0-beta.7",
   "dependencies": {
     "qs": "6.5.2"
   },
@@ -14,9 +14,9 @@
   },
   "devDependencies": {
     "@types/enzyme": "3.1.14",
+    "@types/history": "^4.7.2",
     "@types/jest": "23.3.8",
     "@types/lodash": "4.14.117",
-    "@types/history": "^4.7.2",
     "@types/qs": "6.5.1",
     "@types/query-string": "6.1.1",
     "@types/react": "16.4.18",
@@ -29,8 +29,8 @@
     "history": "4.7.2",
     "husky": "1.1.0",
     "jest": "23.6.0",
-    "lint-staged": "7.3.0",
     "jsdom": "12.2.0",
+    "lint-staged": "7.3.0",
     "prettier": "1.14.3",
     "props-interceptor": "1.0.1",
     "query-string": "6.2.0",
@@ -105,7 +105,7 @@
     "lint": "tslint --fix",
     "prettify": "prettier --parser typescript --write",
     "format": "yarn lint src/**/*.ts src/**/*.tsx example/src/**/*.ts example/src/**/*.tsx  && yarn prettify src/**/*.ts src/**/*.tsx example/src/**/*.ts example/src/**/*.tsx",
-    "prepublishOnly": "yarn build && yarn lint && yarn test",
+    "prepublishOnly": "yarn build && yarn test",
     "report-coverage": "codecov",
     "start": "tsc --watch",
     "test": "jest"
