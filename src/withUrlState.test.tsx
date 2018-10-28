@@ -12,9 +12,17 @@ import { interceptor } from 'props-interceptor'
 import qs from 'qs'
 import queryString from 'query-string'
 import React from 'react'
-import { HistoryAdapter, withUrlState, UrlStateProps, Config, Parse, Stringify, html5HistoryAdapter } from './withUrlState'
+import {
+  HistoryAdapter,
+  withUrlState,
+  UrlStateProps,
+  Config,
+  Parse,
+  Stringify,
+  html5HistoryAdapter,
+} from './withUrlState'
 
-type ControlState = { animal?: string, color: string }
+type ControlState = { animal?: string; color: string }
 declare const global: { window: Window }
 
 const UrlBasedControls = (props: UrlStateProps<ControlState>) => (
@@ -31,7 +39,8 @@ const UrlBasedControls = (props: UrlStateProps<ControlState>) => (
 )
 
 const parseQueryString: Parse<ControlState> = str => qs.parse(str, { ignoreQueryPrefix: true })
-const stringifyState: Stringify<ControlState> = state => qs.stringify(state, { addQueryPrefix: true })
+const stringifyState: Stringify<ControlState> = state =>
+  qs.stringify(state, { addQueryPrefix: true })
 
 describe('withUrlState', () => {
   let testHistory: History = null as any
@@ -40,32 +49,31 @@ describe('withUrlState', () => {
     testHistory = createBrowserHistory()
     const newLocation: LocationDescriptorObject = {
       ...testHistory.location,
-      search: stringifyState({ color: 'Blue' }),
+      search: qs.stringify({ color: 'Blue' }),
     }
     testHistory.replace(newLocation)
   })
 
   it('will not override any params which are already provided in the query string', () => {
-    const UrlConnectedControls =
-      withUrlState<{}, ControlState>(() => ({ color: 'Red' }), { history: testHistory })(UrlBasedControls)
+    const enhance = withUrlState<ControlState>(() => ({ color: 'Red' }), { history: testHistory })
+    const UrlConnectedControls = enhance(UrlBasedControls)
 
     expect(parseQueryString(window.location.search)).toEqual({ color: 'Blue' })
 
-    const wrapper = mount(<UrlConnectedControls/>)
+    const wrapper = mount(<UrlConnectedControls />)
 
     expect(parseQueryString(window.location.search)).toEqual({ color: 'Blue' })
     expect(wrapper.find('.currentColor').text()).toBe('Blue')
   })
 
   it('will append any additional any params which are not provided in the querystring', () => {
-    const UrlConnectedControls =
-      withUrlState<{}, ControlState>(
-        () => ({ animal: 'Ant', color: 'Blue' }),
-        { history: testHistory },
-      )(UrlBasedControls)
+    const UrlConnectedControls = withUrlState<ControlState>(
+      () => ({ animal: 'Ant', color: 'Blue' }),
+      { history: testHistory },
+    )(UrlBasedControls)
     expect(parseQueryString(testHistory.location.search)).toEqual({ color: 'Blue' })
 
-    const wrapper = mount(<UrlConnectedControls/>)
+    const wrapper = mount(<UrlConnectedControls />)
 
     expect(parseQueryString(testHistory.location.search)).toEqual({ animal: 'Ant', color: 'Blue' })
     expect(wrapper.find('.currentAnimal').text()).toBe('Ant')
@@ -73,39 +81,36 @@ describe('withUrlState', () => {
   })
 
   it('sets the url with the initial state', () => {
-    const UrlConnectedControls =
-      withUrlState<{}, ControlState>(
-        () => ({ animal: 'Ant', color: 'Blue' }),
-        { history: testHistory },
-      )(UrlBasedControls)
+    const UrlConnectedControls = withUrlState<ControlState>(
+      () => ({ animal: 'Ant', color: 'Blue' }),
+      { history: testHistory },
+    )(UrlBasedControls)
     expect(parseQueryString(testHistory.location.search)).toEqual({ color: 'Blue' })
 
-    mount(<UrlConnectedControls/>)
+    mount(<UrlConnectedControls />)
 
     expect(parseQueryString(testHistory.location.search)).toEqual({ animal: 'Ant', color: 'Blue' })
   })
 
   it('provides the current urls state to the wrapped component', () => {
-    const UrlConnectedControls =
-      withUrlState<{}, ControlState>(
-        () => ({ animal: 'Ant', color: 'Blue' }),
-        { history: testHistory },
-      )(UrlBasedControls)
+    const UrlConnectedControls = withUrlState<ControlState>(
+      () => ({ animal: 'Ant', color: 'Blue' }),
+      { history: testHistory },
+    )(UrlBasedControls)
 
-    const wrapper = mount(<UrlConnectedControls/>)
+    const wrapper = mount(<UrlConnectedControls />)
 
     expect(wrapper.find('.currentAnimal').text()).toBe('Ant')
     expect(wrapper.find('.currentColor').text()).toBe('Blue')
   })
 
   it('updates the url when the wrapped component updates the state', () => {
-    const UrlConnectedControls =
-      withUrlState<{}, ControlState>(
-        () => ({ animal: 'Ant', color: 'Blue' }),
-        { history: testHistory },
-      )(UrlBasedControls)
+    const UrlConnectedControls = withUrlState<ControlState>(
+      () => ({ animal: 'Ant', color: 'Blue' }),
+      { history: testHistory },
+    )(UrlBasedControls)
 
-    const wrapper = mount(<UrlConnectedControls/>)
+    const wrapper = mount(<UrlConnectedControls />)
     expect(wrapper.find('.currentAnimal').text()).toBe('Ant')
     expect(wrapper.find('.currentColor').text()).toBe('Blue')
     expect(parseQueryString(testHistory.location.search)).toEqual({ animal: 'Ant', color: 'Blue' })
@@ -123,23 +128,20 @@ describe('withUrlState', () => {
         const memoryHistory = createMemoryHistory()
         const UrlConnectedControls = flow(
           interceptor((props: UrlStateProps<ControlState>) => propSpy(props)),
-          withUrlState<{}, ControlState>(
-            () => ({ color: 'Red' }),
-            {
-              history: memoryHistory,
-              shouldPushState: () => true,
-            }
-          )
+          withUrlState<ControlState>(() => ({ color: 'Red' }), {
+            history: memoryHistory,
+            shouldPushState: () => true,
+          }),
         )(UrlBasedControls)
 
-        mount(<UrlConnectedControls/>)
+        mount(<UrlConnectedControls />)
         const { setUrlState } = propSpy.mock.calls[0][0]
         setUrlState({ color: 'Green' })
         setUrlState({ color: 'Blue' })
         expect(memoryHistory.action).toBe('PUSH')
         expect(memoryHistory.entries.length).toBe(3)
       })
-      
+
       it('allows comparison of the *parsed* state to be applied and the current state', () => {
         const parse = (str: string): Partial<ControlState> => {
           const state = qs.parse(str, { ignoreQueryPrefix: true })
@@ -151,23 +153,23 @@ describe('withUrlState', () => {
           return qs.stringify(filteredState)
         }
         const shouldPushState = jest.fn()
-        
+
         const config = {
           history: testHistory,
           shouldPushState,
           serialisation: { parse, stringify },
         }
-        
+
         const propSpy = jest.fn()
         const UrlConnectedControls = flow(
           interceptor((props: UrlStateProps<ControlState>) => propSpy(props)),
-          withUrlState<{}, ControlState>(() => ({ animal: 'bear', color: 'blue'}), config)
+          withUrlState<ControlState>(() => ({ animal: 'bear', color: 'blue' }), config),
         )(UrlBasedControls)
-    
-        mount(<UrlConnectedControls/>)
+
+        mount(<UrlConnectedControls />)
         const { setUrlState } = propSpy.mock.calls[0][0]
-        setUrlState({ animal: 'Cat' , otherErroneousParam: 'foo' })
-        
+        setUrlState({ animal: 'Cat', otherErroneousParam: 'foo' })
+
         const next = { color: 'Blue', animal: 'Cat' }
         const current = { color: 'Blue', animal: 'Empty' }
         expect(shouldPushState).toBeCalledWith({}, next, current)
@@ -177,13 +179,14 @@ describe('withUrlState', () => {
     describe('history', () => {
       it('can accept a history provider to use alternate implementations', () => {
         const memoryHistory = createMemoryHistory()
-        const UrlConnectedControls =
-          withUrlState<{}, ControlState>(() => ({ color: 'Red' }), { history: memoryHistory })(UrlBasedControls)
+        const enhance = withUrlState<ControlState>(() => ({ color: 'Red' }), {
+          history: memoryHistory,
+        })
+        const UrlConnectedControls = enhance(UrlBasedControls)
 
-        const wrapper = mount(<UrlConnectedControls/>)
+        mount(<UrlConnectedControls />)
 
         expect(parseQueryString(memoryHistory.location.search)).toEqual({ color: 'Red' })
-        expect(wrapper.find('.currentColor').text()).toBe('Red')
         expect(memoryHistory.entries.length).toBe(1)
       })
 
@@ -199,14 +202,13 @@ describe('withUrlState', () => {
           push: (location: LocationDescriptorObject) => {}, // tslint:disable-line
           replace: (location: LocationDescriptorObject) => {}, // tslint:disable-line
         }
+        const enhance = withUrlState<ControlState>(() => ({ animal: 'Ant', color: 'Blue' }), {
+          history: unsubscribeHistory,
+        })
 
-        const UrlConnectedControls =
-          withUrlState<{}, ControlState>(
-            () => ({ animal: 'Ant', color: 'Blue' }),
-            { history: unsubscribeHistory },
-          )(UrlBasedControls)
+        const UrlConnectedControls = enhance(UrlBasedControls)
 
-        const wrapper = mount(<UrlConnectedControls/>)
+        const wrapper = mount(<UrlConnectedControls />)
         wrapper.unmount()
 
         expect(unsubscribeCallback).toHaveBeenCalled()
@@ -222,24 +224,31 @@ describe('withUrlState', () => {
             stringify: queryString.stringify,
           },
         }
-        const UrlConnectedControls =
-          withUrlState<{}, ControlState>(() => ({ color: 'Red' }), config)(UrlBasedControls)
+        const UrlConnectedControls = withUrlState<ControlState>(() => ({ color: 'Red' }), config)(
+          UrlBasedControls,
+        )
         expect(parseQueryString(testHistory.location.search)).toEqual({ color: 'Blue' })
 
-        const wrapper = mount(<UrlConnectedControls/>)
+        const wrapper = mount(<UrlConnectedControls />)
 
         expect(parseQueryString(testHistory.location.search)).toEqual({ color: 'Blue' })
         expect(wrapper.find('.currentColor').text()).toBe('Blue')
       })
 
       it('supports complex serialisation workflows', () => {
-        type SortOptions = 'BEST_MATCH' | 'NEWLY_LISTED' | 'NEARBY' | 'ENDING_SOON' | 'HIGHEST_PAY' | 'LOWEST_PAY'
+        type SortOptions =
+          | 'BEST_MATCH'
+          | 'NEWLY_LISTED'
+          | 'NEARBY'
+          | 'ENDING_SOON'
+          | 'HIGHEST_PAY'
+          | 'LOWEST_PAY'
         type QueryParams = {
-          q: string,
-          page: number,
-          sort: SortOptions,
-          min_price?: number,
-          max_price?: number,
+          q: string
+          page: number
+          sort: SortOptions
+          min_price?: number
+          max_price?: number
         }
         const defaultSort: SortOptions = 'BEST_MATCH'
         const defaultQueryParameters: QueryParams = {
@@ -258,22 +267,23 @@ describe('withUrlState', () => {
           }
         }
 
-        const config: Config<{}, QueryParams> = {
+        const config: Config<QueryParams> = {
           history: testHistory,
           serialisation: {
             parse: (queryStr: string): QueryParams => {
               const stringyParams = qs.parse(queryStr, { ignoreQueryPrefix: true })
               if (typeof stringyParams === 'object') {
-                const pageFromQuery = (typeof stringyParams.page === 'string')
-                  ? parseInt(stringyParams.page, 10)
-                  : undefined
+                const pageFromQuery =
+                  typeof stringyParams.page === 'string'
+                    ? parseInt(stringyParams.page, 10)
+                    : undefined
 
                 const maxPriceAsNumber = parseInt(stringyParams.max_price || '', 10)
                 const minPriceAsNumber = parseInt(stringyParams.min_price || '', 10)
                 return {
                   q: stringyParams.q || defaultQueryParameters.q,
                   page: pageFromQuery !== undefined && !isNaN(pageFromQuery) ? pageFromQuery : 1,
-                  sort: stringyParams.sort as SortOptions || defaultSort,
+                  sort: (stringyParams.sort as SortOptions) || defaultSort,
                   max_price: !isNaN(maxPriceAsNumber) ? maxPriceAsNumber : undefined,
                   min_price: !isNaN(minPriceAsNumber) ? minPriceAsNumber : undefined,
                 }
@@ -283,9 +293,10 @@ describe('withUrlState', () => {
             },
             stringify: (state: Partial<QueryParams>) => {
               const { max_price, min_price } = state
-              const minAndMaxPrice = min_price && max_price
-                ? { max_price, min_price }
-                : { max_price: undefined, min_price: undefined }
+              const minAndMaxPrice =
+                min_price && max_price
+                  ? { max_price, min_price }
+                  : { max_price: undefined, min_price: undefined }
               const filteredState = {
                 q: state.q ? state.q : defaultQueryParameters.q,
                 page: state.page === 1 ? undefined : state.page,
@@ -312,10 +323,12 @@ describe('withUrlState', () => {
           </div>
         )
 
-        const UrlConnectedControls =
-          withUrlState<{}, QueryParams>(() => defaultQueryParameters, config)(QueryParamComponent)
+        const UrlConnectedControls = withUrlState<QueryParams>(
+          () => defaultQueryParameters,
+          config,
+        )(QueryParamComponent)
 
-        const wrapper = mount(<UrlConnectedControls/>)
+        const wrapper = mount(<UrlConnectedControls />)
 
         expect(testHistory.location.search).toEqual('?q=Winchester')
 
@@ -332,11 +345,13 @@ describe('withUrlState', () => {
             min_price: 20,
             page: 3,
             sort: 'NEARBY',
-          })
+          }),
         })
         wrapper.update()
 
-        expect(testHistory.location.search).toEqual('?q=Winchester&max_price=30&min_price=20&page=3&sort=NEARBY')
+        expect(testHistory.location.search).toEqual(
+          '?q=Winchester&max_price=30&min_price=20&page=3&sort=NEARBY',
+        )
         expect(wrapper.find('.max_price').text()).toBe('30')
         expect(wrapper.find('.min_price').text()).toBe('20')
         expect(wrapper.find('.page').text()).toBe('3')
@@ -368,7 +383,6 @@ describe('withUrlState', () => {
     })
 
     it(`registers itself as an event listener of 'popstate'`, () => {
-
       html5HistoryAdapter.listen(listener)
       expect(window.addEventListener).toHaveBeenCalledWith('popstate', listener)
     })

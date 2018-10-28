@@ -1,20 +1,16 @@
 {
   "extends": "../tsconfig.json",
+  "baseUrl": ".",
   "compilerOptions": {
-    "outDir": "build/dist",
     "module": "esnext",
+    "outDir": "build/dist",
     "rootDir": "src"
   },
   "exclude": [
     "node_modules",
     "build",
-    "scripts",
-    "acceptance-tests",
     "webpack",
     "jest",
     "src/setupTests.ts"
-  ],
-  "paths": {
-    "with-url-state": "../src"
-  }
+  ]
 }

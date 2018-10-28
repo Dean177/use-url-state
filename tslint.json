@@ -1,4 +1,5 @@
 {
+    "defaultSeverity": "warning",
     "extends": ["tslint-react"],
     "rules": {
         "align": [
