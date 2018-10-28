@@ -104,7 +104,7 @@
     "deploy:docs": "gh-pages -d example/build",
     "lint": "tslint --fix",
     "prettify": "prettier --parser typescript --write",
-    "format": "yarn lint src/**/*.ts src/**/*.tsx example/src/**/*.ts example/src/**/*.tsx  && yarn format src/**/*.ts src/**/*.tsx example/src/**/*.ts example/src/**/*.tsx",
+    "format": "yarn lint src/**/*.ts src/**/*.tsx example/src/**/*.ts example/src/**/*.tsx  && yarn prettify src/**/*.ts src/**/*.tsx example/src/**/*.ts example/src/**/*.tsx",
     "prepublishOnly": "yarn build && yarn lint && yarn test",
     "report-coverage": "codecov",
     "start": "tsc --watch",
