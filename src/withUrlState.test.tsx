@@ -372,7 +372,7 @@ describe('withUrlState', () => {
         wrapper.update()
 
         expect(testHistory.location.search).toEqual(
-          '?q=Winchester&max_price=30&min_price=20&page=3&sort=NEARBY',
+          '?max_price=30&min_price=20&page=3&q=Winchester&sort=NEARBY',
         )
         expect(wrapper.find('.max_price').text()).toBe('30')
         expect(wrapper.find('.min_price').text()).toBe('20')

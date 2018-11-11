@@ -31,12 +31,6 @@ export const UrlForm = (props: OwnProps & UrlStateProps<LiftedState>) => (
 
 const Html = withUrlState<LiftedState, OwnProps>(() => ({ color: 'blue' }))(UrlForm)
 
-const history = createBrowserHistory()
-
-const Npm = withUrlState<LiftedState, OwnProps>(() => ({ color: 'red' }), { history })(
-  UrlForm,
-)
-
 const CustomSerialisation = withUrlState<LiftedState, OwnProps>(
   () => ({ color: 'green' }),
   {
@@ -69,14 +63,12 @@ export default () => (
   <div className="App">
     <div className="side-nav">
       <Link to="/html5">Html5 History</Link>
-      <Link to="/npm">Npm History</Link>
       <Link to="/custom-serialisation">Custom serialisation</Link>
       <Link to="/render-prop">Render prop</Link>
     </div>
     <div className="content">
       <Router>
-        <Html default={true} path="/html5" />
-        <Npm path="/npm" />
+        <Html default={true} path="/" />
         <CustomSerialisation path="/custom-serialisation" />
         <RenderProp path="/render-prop" />
       </Router>
