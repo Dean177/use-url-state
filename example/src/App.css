@@ -4,38 +4,13 @@ body {
   font-family: sans-serif;
 }
 
-body, #root, .App, .UrlForm {
+body, #root, .UrlForm {
   align-items: center;
   display: flex;
   flex-direction: column;
   flex: 1;
   height: 100%;
   width: 100%;
-}
-
-.App {
-  flex-direction: row;
-}
-
-.side-nav {
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
-}
-
-.side-nav a {
-  padding-bottom: 6px;
-  padding-top: 6px;
-}
-
-a:visited{
-  color: blue;
-}
-
-.content {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
 }
 
 .UrlForm {

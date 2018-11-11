@@ -20,10 +20,5 @@
     "strict": true,
     "target": "es5"
   },
-  "exclude": [
-    "dist",
-    "example",
-    "node_modules",
-    "**/*.test.tsx"
-  ]
+  "exclude": ["dist", "example", "node_modules"]
 }

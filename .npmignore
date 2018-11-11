@@ -1,8 +1,11 @@
+.circleci
+.idea
 coverage
+dist/withUrlState.test.js
+dist/withUrlState.test.d.ts
 example
 node_modules
-yarn-error.log
-yarn.lock
-setupTestFramework.js
 src
-dist/withUrlState.test.js
+setupTestFramework.js
+yarn.lock
+yarn-error.log

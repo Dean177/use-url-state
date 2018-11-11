@@ -7,19 +7,11 @@ import {
   UnregisterCallback,
 } from 'history'
 import qs from 'qs'
-import { Component, ComponentType, createElement, ReactChild } from 'react'
-
-type PropMapper<Props, MappedProps> = (
-  component: ComponentType<MappedProps>,
-) => ComponentType<Props>
+import { useState, useEffect, ComponentType, createElement, ReactChild } from 'react'
 
 export type UrlStateProps<T> = {
-  setUrlState: (newState: Partial<T>) => void
+  setUrlState: (newState: T) => void
   urlState: T
-}
-
-export type InternalState = {
-  previousSearch: string
 }
 
 export type HistoryAdapter = {
@@ -45,177 +37,105 @@ export const html5HistoryAdapter: HistoryAdapter = {
     window.history.replaceState(window.history.state, document.title, search),
 }
 
-export type Parse<T> = (queryString: string) => Partial<T>
-
-export type Stringify<T> = (state: Partial<T>) => string
-
-export type Config<T = {}, OP = {}> = {
-  history?: HistoryAdapter
-  serialisation?: {
-    parse: Parse<T>
-    stringify: Stringify<T>
+export type Config<T> = {
+  history: HistoryAdapter
+  serialisation: {
+    parse: (queryString: string) => T
+    stringify: (state: T) => string
   }
-  shouldPushState?: (props: OP, next: Partial<T>, current: Partial<T>) => boolean
+  shouldPushState: (next: T, current: T) => boolean
 }
 
-const parseConfig = <T, OP = {}>(config: Config<T, OP> = {}) => ({
-  history: config.history ? config.history : html5HistoryAdapter,
-  parse:
-    config.serialisation && config.serialisation.parse
-      ? config.serialisation.parse
-      : (queryString: string) => qs.parse(queryString, { ignoreQueryPrefix: true }),
-  stringify:
-    config.serialisation && config.serialisation.stringify
-      ? config.serialisation.stringify
-      : (state: Partial<T>) => qs.stringify(state, { addQueryPrefix: true }),
+const alwaysReplaceState: Config<any>['shouldPushState'] = () => false
+
+const parseConfig = <T>(config: Partial<Config<T>> = {}): Config<T> => ({
+  history: config.history || html5HistoryAdapter,
+  serialisation: config.serialisation || {
+    parse: (queryString: string) => qs.parse(queryString, { ignoreQueryPrefix: true }),
+    stringify: (state: Partial<T>) => qs.stringify(state, { addQueryPrefix: true }),
+  },
+  shouldPushState: config.shouldPushState || alwaysReplaceState,
 })
 
-export const withUrlState = <T extends object, OP = {}>(
-  getInitialState?: (props: OP) => T,
-  config?: Config<T, OP>,
-): PropMapper<OP, OP & UrlStateProps<T>> => {
-  const { history, parse, stringify } = parseConfig(config)
-  return (WrappedComponent: ComponentType<OP & UrlStateProps<T>>): ComponentType<OP> =>
-    class WithUrlStateWrapper extends Component<OP, InternalState> {
-      unsubscribe: (() => void) | null = null
-      state = {
-        previousSearch: history.location.search,
+export function useUrlState<T>(
+  initialState: T,
+  config?: Partial<Config<T>>,
+): [T, (newState: T) => void] {
+  const { history, serialisation, shouldPushState } = parseConfig(config)
+
+  // tslint:disable:no-any Typescript cant handle generic spread yet
+  const state = {
+    ...(initialState as any),
+    ...(serialisation.parse(history.location.search) as any),
+  } as T
+  // tslint:enable:no-any max-line-length
+  const initalSearch = serialisation.stringify(state)
+  const [previousSearch, setPreviousSearch] = useState(initalSearch)
+
+  useEffect(() => {
+    history.replace({
+      ...history.location,
+      search: initalSearch,
+    })
+    return history.listen(function onLocationChange() {
+      if (history.location.search !== previousSearch) {
+        setPreviousSearch(history.location.search)
       }
+    })
+  })
 
-      componentWillMount() {
-        const initialState: Partial<T> | undefined =
-          getInitialState && getInitialState(this.props)
-        const search = stringify({
-          ...(initialState as any), // tslint:disable-line:no-any
-          ...(parse(history.location.search) as any), // tslint:disable-line:no-any max-line-length Typescript cant handle generic spread yet,
-        } as Partial<T>)
-
-        history.replace({
-          ...history.location,
-          search,
-        })
-        this.unsubscribe = history.listen(this.onLocationChange)
-      }
-
-      componentWillUnmount() {
-        if (this.unsubscribe != null) {
-          this.unsubscribe()
-        }
-      }
-
-      onLocationChange = () => {
-        if (history.location.search !== this.state.previousSearch) {
-          this.setState({ previousSearch: history.location.search })
-        }
-      }
-
-      setUrlState = (newState: Partial<T>): void => {
-        // tslint:disable:no-any Typescript cant handle generic spread yet
-        const search = stringify({
-          ...(getInitialState && (getInitialState(this.props) as any)),
-          ...(parse(history.location.search) as any),
-          ...(newState as any),
-        } as Partial<T>)
-        // tslint:enable:no-any
-
-        const nextLocation = { ...history.location, search }
-        const parsedState = parse(search)
-        const previousParsedState = parse(this.state.previousSearch)
-        const shouldPush =
-          config &&
-          config.shouldPushState &&
-          config.shouldPushState(this.props, parsedState, previousParsedState)
-
-        if (shouldPush) {
-          history.push(nextLocation)
-        } else {
-          history.replace(nextLocation)
-        }
-
-        this.onLocationChange()
-      }
-
-      render() {
-        const enhancedProps: OP & UrlStateProps<T> = {
-          ...(this.props as any), // tslint:disable-line:no-any Typescript cant handle generic spread yet
-          setUrlState: this.setUrlState,
-          urlState: parse(history.location.search),
-        }
-
-        return createElement<OP & UrlStateProps<T>>(WrappedComponent, enhancedProps)
-      }
+  function setUrlState(newState: T): void {
+    const nextLocation = {
+      ...history.location,
+      search: serialisation.stringify(newState),
     }
+
+    shouldPushState(newState, serialisation.parse(previousSearch))
+      ? history.push(nextLocation)
+      : history.replace(nextLocation)
+  }
+
+  useEffect(() => {
+    setUrlState(state)
+  }, [])
+  return [serialisation.parse(history.location.search), setUrlState]
+}
+
+export type PropEnhancer<Props, MappedProps> = (
+  component: ComponentType<MappedProps>,
+) => ComponentType<Props>
+
+export type HocConfig<T, OP> = {
+  history: HistoryAdapter
+  serialisation: { parse: (queryString: string) => T; stringify: (state: T) => string }
+  shouldPushState: (props: OP) => (next: T, current: T) => boolean
+}
+
+export const withUrlState = <T extends {}, OP = {}>(
+  getInitialState: (props: OP) => T,
+  config: Partial<HocConfig<T, OP>> = {},
+): PropEnhancer<OP, OP & UrlStateProps<T>> => (
+  WrappedComponent: ComponentType<OP & UrlStateProps<T>>,
+): ComponentType<OP> => (props: OP) => {
+  const hocConfig: Partial<Config<T>> = {
+    ...config,
+    shouldPushState: config.shouldPushState && config.shouldPushState(props),
+  }
+  const [urlState, setUrlState] = useUrlState(getInitialState(props), hocConfig)
+  return createElement(WrappedComponent, ({
+    ...(props as any),
+    urlState,
+    setUrlState,
+  } as any) as OP & UrlStateProps<T>)
 }
 
 export type Props<T> = {
-  config?: Config<T> & {
-    shouldPushState?: (next: Partial<T>, current: Partial<T>) => boolean
-  }
-  initialState?: T
+  config?: Config<T>
+  initialState: T
   render: (renderProps: UrlStateProps<T>) => ReactChild
 }
 
-export class UrlState<T> extends Component<Props<T>, InternalState> {
-  history: HistoryAdapter
-  state: InternalState
-  unsubscribe: () => void
-
-  constructor(props: Props<T>) {
-    super(props)
-    const initialState: T | undefined = props.initialState
-    const { history, parse, stringify } = parseConfig(this.props.config)
-    this.history = history
-    const state = {
-      ...(initialState as any), // tslint:disable-line:no-any
-      ...(parse(history.location.search) as any), // tslint:disable-line:no-any max-line-length Typescript cant handle generic spread yet,
-    } as Partial<T>
-    const search = stringify(state)
-
-    this.state = {
-      previousSearch: history.location.search,
-    }
-    history.replace({
-      ...history.location,
-      search,
-    })
-
-    this.unsubscribe = history.listen(this.onLocationChange)
-  }
-
-  componentWillUnmount() {
-    if (this.unsubscribe != null) {
-      this.unsubscribe()
-    }
-  }
-
-  onLocationChange = () => {
-    const { history } = parseConfig(this.props.config)
-    if (history.location.search !== this.state.previousSearch) {
-      this.setState({ previousSearch: history.location.search })
-    }
-  }
-
-  setUrlState = (newState: Partial<T>): void => {
-    const { history, parse, stringify } = parseConfig(this.props.config)
-    const nextLocation = {
-      ...history.location,
-      search: stringify(newState),
-    }
-
-    this.props.config &&
-    this.props.config.shouldPushState &&
-    this.props.config.shouldPushState(newState, parse(this.state.previousSearch))
-      ? history.push(nextLocation)
-      : history.replace(nextLocation)
-
-    this.onLocationChange()
-  }
-
-  render() {
-    const { history, parse } = parseConfig(this.props.config)
-    return this.props.render({
-      setUrlState: this.setUrlState,
-      urlState: parse(history.location.search),
-    })
-  }
+export const UrlState = <T>(props: Props<T>) => {
+  const [urlState, setUrlState] = useUrlState<T>(props.initialState, props.config)
+  return props.render({ setUrlState, urlState })
 }

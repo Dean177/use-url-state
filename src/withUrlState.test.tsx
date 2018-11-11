@@ -1,4 +1,3 @@
-// tslint:disable:no-any
 import { mount } from 'enzyme'
 import {
   createBrowserHistory,
@@ -16,14 +15,12 @@ import {
   HistoryAdapter,
   withUrlState,
   UrlStateProps,
-  Config,
-  Parse,
-  Stringify,
   html5HistoryAdapter,
+  HocConfig,
+  useUrlState,
 } from './withUrlState'
 
 type ControlState = { animal?: string; color: string }
-declare const global: { window: Window }
 
 const UrlBasedControls = (props: UrlStateProps<ControlState>) => (
   <div>
@@ -38,10 +35,7 @@ const UrlBasedControls = (props: UrlStateProps<ControlState>) => (
   </div>
 )
 
-const parseQueryString: Parse<ControlState> = str =>
-  qs.parse(str, { ignoreQueryPrefix: true })
-const stringifyState: Stringify<ControlState> = state =>
-  qs.stringify(state, { addQueryPrefix: true })
+const parseQueryString = (str: any) => qs.parse(str, { ignoreQueryPrefix: true })
 
 describe('withUrlState', () => {
   let testHistory: History = null as any
@@ -55,13 +49,15 @@ describe('withUrlState', () => {
     testHistory.replace(newLocation)
   })
 
+  it('sanity checks the before hook', () => {
+    expect(parseQueryString(testHistory.location.search)).toEqual({ color: 'Blue' })
+  })
+
   it('will not override any params which are already provided in the query string', () => {
     const enhance = withUrlState<ControlState>(() => ({ color: 'Red' }), {
       history: testHistory,
     })
     const UrlConnectedControls = enhance(UrlBasedControls)
-
-    expect(parseQueryString(window.location.search)).toEqual({ color: 'Blue' })
 
     const wrapper = mount(<UrlConnectedControls />)
 
@@ -70,11 +66,13 @@ describe('withUrlState', () => {
   })
 
   it('will append any additional any params which are not provided in the querystring', () => {
-    const UrlConnectedControls = withUrlState<ControlState>(
-      () => ({ animal: 'Ant', color: 'Blue' }),
-      { history: testHistory },
-    )(UrlBasedControls)
-    expect(parseQueryString(testHistory.location.search)).toEqual({ color: 'Blue' })
+    const UrlConnectedControls = () => {
+      const [urlState, setUrlState] = useUrlState<ControlState>(
+        { animal: 'Ant', color: 'Blue' },
+        { history: testHistory },
+      )
+      return <UrlBasedControls urlState={urlState} setUrlState={setUrlState} />
+    }
 
     const wrapper = mount(<UrlConnectedControls />)
 
@@ -91,7 +89,6 @@ describe('withUrlState', () => {
       () => ({ animal: 'Ant', color: 'Blue' }),
       { history: testHistory },
     )(UrlBasedControls)
-    expect(parseQueryString(testHistory.location.search)).toEqual({ color: 'Blue' })
 
     mount(<UrlConnectedControls />)
 
@@ -141,12 +138,13 @@ describe('withUrlState', () => {
       it('takes a predicate used to decide if the new search is pushed or replaced', () => {
         const propSpy = jest.fn()
         const memoryHistory = createMemoryHistory()
+        const hocConfig: Partial<HocConfig<ControlState, {}>> = {
+          history: memoryHistory,
+          shouldPushState: () => (n: ControlState, p: ControlState) => true,
+        }
         const UrlConnectedControls = flow(
           interceptor((props: UrlStateProps<ControlState>) => propSpy(props)),
-          withUrlState<ControlState>(() => ({ color: 'Red' }), {
-            history: memoryHistory,
-            shouldPushState: () => true,
-          }),
+          withUrlState<ControlState, {}>(() => ({ color: 'Red' }), hocConfig),
         )(UrlBasedControls)
 
         mount(<UrlConnectedControls />)
@@ -158,7 +156,7 @@ describe('withUrlState', () => {
       })
 
       it('allows comparison of the *parsed* state to be applied and the current state', () => {
-        const parse = (str: string): Partial<ControlState> => {
+        const parse = (str: string): ControlState => {
           const state = qs.parse(str, { ignoreQueryPrefix: true })
           return { ...state, animal: state.animal || 'Empty' }
         }
@@ -169,16 +167,19 @@ describe('withUrlState', () => {
         }
         const shouldPushState = jest.fn()
 
-        const config = {
+        const hocConfig: Partial<HocConfig<ControlState, {}>> = {
           history: testHistory,
-          shouldPushState,
+          shouldPushState: () => shouldPushState,
           serialisation: { parse, stringify },
         }
 
         const propSpy = jest.fn()
         const UrlConnectedControls = flow(
           interceptor((props: UrlStateProps<ControlState>) => propSpy(props)),
-          withUrlState<ControlState>(() => ({ animal: 'bear', color: 'blue' }), config),
+          withUrlState<ControlState>(
+            () => ({ animal: 'bear', color: 'blue' }),
+            hocConfig,
+          ),
         )(UrlBasedControls)
 
         mount(<UrlConnectedControls />)
@@ -235,10 +236,10 @@ describe('withUrlState', () => {
 
     describe('serialisation', () => {
       it('accepts a custom parse and stringify', () => {
-        const config = {
+        const config: Partial<HocConfig<ControlState, {}>> = {
           history: testHistory,
           serialisation: {
-            parse: queryString.parse,
+            parse: queryString.parse as any,
             stringify: queryString.stringify,
           },
         }
@@ -262,8 +263,9 @@ describe('withUrlState', () => {
           | 'ENDING_SOON'
           | 'HIGHEST_PAY'
           | 'LOWEST_PAY'
+
         type QueryParams = {
-          q: string
+          q?: string
           page: number
           sort: SortOptions
           min_price?: number
@@ -286,7 +288,7 @@ describe('withUrlState', () => {
           }
         }
 
-        const config: Config<QueryParams> = {
+        const config: Partial<HocConfig<QueryParams, {}>> = {
           history: testHistory,
           serialisation: {
             parse: (queryStr: string): QueryParams => {
