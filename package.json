@@ -1,41 +1,50 @@
 {
-  "author": "Dean Merchant",
+  "author": "Dean Merchant <deanmerchant@gmail.com> (https://github.com/Dean177",
+  "contributors": [
+    "Matt Hawes <hawes.info@gmail.com> (https://github.com/MGHawes)"
+  ],
   "name": "with-url-state",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "repository": {
     "type": "git",
     "url": "dean177/with-url-state"
   },
   "dependencies": {
-    "query-string": "^6.0.0"
+    "qs": "6.5.2"
   },
   "peerDependencies": {
-    "history": "4.6.x || 4.7.x",
-    "react": "15.x || 16.x",
-    "react-dom": "15.x || 16.x"
+    "react": "16.x",
+    "react-dom": "16.x"
   },
   "devDependencies": {
-    "@types/enzyme": "3.1.9",
-    "@types/history": "4.6.2",
-    "@types/jest": "22.2.3",
-    "@types/lodash": "4.14.106",
-    "@types/query-string": "5.1.0",
-    "@types/react": "16.3.3",
-    "@types/react-dom": "16.0.5",
-    "codecov": "3.0.0",
-    "concurrently": "3.5.1",
-    "enzyme": "3.3.0",
-    "enzyme-adapter-react-16": "1.1.1",
+    "@types/enzyme": "3.1.14",
+    "@types/history": "4.7.2",
+    "@types/jest": "23.3.8",
+    "@types/lodash": "4.14.117",
+    "@types/qs": "6.5.1",
+    "@types/query-string": "6.1.1",
+    "@types/react": "16.4.18",
+    "@types/react-dom": "16.0.9",
+    "codecov": "3.1.0",
+    "concurrently": "4.0.1",
+    "enzyme": "3.7.0",
+    "enzyme-adapter-react-16": "1.6.0",
+    "ghpages": "0.0.10",
     "history": "4.7.2",
-    "jest": "22.4.3",
-    "jsdom": "11.7.0",
-    "react": "16.3.1",
-    "react-dom": "16.3.1",
-    "react-test-renderer": "16.3.1",
-    "ts-jest": "22.4.2",
-    "tslint": "5.9.1",
-    "tslint-react": "3.5.1",
-    "typescript": "2.8.1"
+    "husky": "1.1.0",
+    "jest": "23.6.0",
+    "jsdom": "12.2.0",
+    "lint-staged": "7.3.0",
+    "prettier": "1.14.3",
+    "props-interceptor": "1.0.1",
+    "query-string": "6.2.0",
+    "react": "16.6.0",
+    "react-dom": "16.6.0",
+    "react-test-renderer": "16.6.0",
+    "ts-jest": "23.10.4",
+    "tslint": "5.11.0",
+    "tslint-react": "3.6.0",
+    "typescript": "3.1.3"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -56,8 +65,36 @@
       "<rootDir>/src/**/?(*.)(spec|test).ts?(x)"
     ],
     "transform": {
-      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+      ".(ts|tsx)": "ts-jest"
     }
+  },
+  "prettier": {
+    "printWidth": 90,
+    "trailingComma": "all",
+    "singleQuote": true,
+    "semi": false
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": [
+        "lint-staged"
+      ],
+      "post-commit": [
+        "git update-index -g"
+      ]
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "yarn lint",
+      "yarn prettify",
+      "git add"
+    ],
+    "*.tsx": [
+      "yarn lint",
+      "yarn prettify",
+      "git add"
+    ]
   },
   "license": "MIT",
   "files": [
@@ -66,12 +103,15 @@
   "main": "dist/withUrlState.js",
   "types": "dist/withUrlState.d.ts",
   "scripts": {
-    "build": "rm -rf dist && tsc --pretty && yarn build:docs",
-    "build:docs": "rm -rf docs && cd example && yarn && yarn build && cp -r ./build ../docs",
-    "lint": "tslint ./src/**/*.ts ./src/**/*.tsx ./example/src/**/*.tsx",
-    "prepublish": "yarn build && yarn lint && yarn test",
+    "build": "rm -rf dist && tsc && yarn build:docs",
+    "build:docs": "rm -rf docs && cd example && yarn && yarn build",
+    "deploy:docs": "gh-pages -d example/build",
+    "lint": "tslint --fix",
+    "prettify": "prettier --parser typescript --write",
+    "format": "yarn lint src/**/*.ts src/**/*.tsx example/src/**/*.ts example/src/**/*.tsx  && yarn prettify src/**/*.ts src/**/*.tsx example/src/**/*.ts example/src/**/*.tsx",
+    "prepublishOnly": "yarn build && yarn test",
     "report-coverage": "codecov",
-    "start": "tsc --pretty --watch",
+    "start": "tsc --watch",
     "test": "jest"
   }
 }
