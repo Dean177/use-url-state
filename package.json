@@ -4,17 +4,17 @@
     "Matt Hawes <hawes.info@gmail.com> (https://github.com/MGHawes)"
   ],
   "name": "with-url-state",
-  "version": "2.0.0-beta.7",
+  "version": "2.0.0",
   "dependencies": {
     "qs": "6.5.2"
   },
   "peerDependencies": {
-    "react": "15.x || 16.x",
-    "react-dom": "15.x || 16.x"
+    "react": "16.x",
+    "react-dom": "16.x"
   },
   "devDependencies": {
     "@types/enzyme": "3.1.14",
-    "@types/history": "^4.7.2",
+    "@types/history": "4.7.2",
     "@types/jest": "23.3.8",
     "@types/lodash": "4.14.117",
     "@types/qs": "6.5.1",
@@ -65,7 +65,7 @@
     }
   },
   "prettier": {
-    "printWidth": 100,
+    "printWidth": 90,
     "trailingComma": "all",
     "singleQuote": true,
     "semi": false
