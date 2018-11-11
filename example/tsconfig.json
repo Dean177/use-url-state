@@ -2,9 +2,15 @@
   "extends": "../tsconfig.json",
   "baseUrl": ".",
   "compilerOptions": {
+    "allowJs": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
     "module": "esnext",
+    "noEmit": true,
     "outDir": "build/dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "resolveJsonModule": true,
+    "skipLibCheck": false
   },
   "exclude": [
     "node_modules",
@@ -12,5 +18,8 @@
     "webpack",
     "jest",
     "src/setupTests.ts"
+  ],
+  "include": [
+    "src"
   ]
 }

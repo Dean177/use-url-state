@@ -64,25 +64,29 @@ export function useUrlState<T>(
   const { history, serialisation, shouldPushState } = parseConfig(config)
 
   // tslint:disable:no-any Typescript cant handle generic spread yet
-  const state = {
+  const [search, setSearch] = useState({
     ...(initialState as any),
     ...(serialisation.parse(history.location.search) as any),
-  } as T
-  // tslint:enable:no-any max-line-length
-  const initalSearch = serialisation.stringify(state)
-  const [previousSearch, setPreviousSearch] = useState(initalSearch)
+  } as T)
+  // tslint:enable:no-any
 
-  useEffect(() => {
-    history.replace({
-      ...history.location,
-      search: initalSearch,
-    })
-    return history.listen(function onLocationChange() {
-      if (history.location.search !== previousSearch) {
-        setPreviousSearch(history.location.search)
-      }
-    })
-  })
+  useEffect(
+    () => {
+      history.replace({
+        ...history.location,
+        search: serialisation.stringify(search),
+      })
+    },
+    [initialState],
+  )
+
+  useEffect(
+    () =>
+      history.listen(function onLocationChange() {
+        setSearch(serialisation.parse(history.location.search))
+      }),
+    [history],
+  )
 
   function setUrlState(newState: T): void {
     const nextLocation = {
@@ -90,15 +94,12 @@ export function useUrlState<T>(
       search: serialisation.stringify(newState),
     }
 
-    shouldPushState(newState, serialisation.parse(previousSearch))
+    shouldPushState(newState, search)
       ? history.push(nextLocation)
       : history.replace(nextLocation)
   }
 
-  useEffect(() => {
-    setUrlState(state)
-  }, [])
-  return [serialisation.parse(history.location.search), setUrlState]
+  return [search, setUrlState]
 }
 
 export type PropEnhancer<Props, MappedProps> = (
