@@ -6,7 +6,7 @@ import {
   Search,
   UnregisterCallback,
 } from 'history'
-import * as qs from 'qs'
+import qs from 'qs'
 import { Component, ComponentType, createElement, ReactChild } from 'react'
 
 type PropMapper<Props, MappedProps> = (
@@ -83,7 +83,8 @@ export const withUrlState = <T extends object, OP = {}>(
       }
 
       componentWillMount() {
-        const initialState: Partial<T> | undefined = getInitialState && getInitialState(this.props)
+        const initialState: Partial<T> | undefined =
+          getInitialState && getInitialState(this.props)
         const search = stringify({
           ...(initialState as any), // tslint:disable-line:no-any
           ...(parse(history.location.search) as any), // tslint:disable-line:no-any max-line-length Typescript cant handle generic spread yet,
@@ -109,22 +110,27 @@ export const withUrlState = <T extends object, OP = {}>(
       }
 
       setUrlState = (newState: Partial<T>): void => {
+        // tslint:disable:no-any Typescript cant handle generic spread yet
         const search = stringify({
-          ...(getInitialState && (getInitialState(this.props) as any)), // tslint:disable-line:no-any Typescript cant handle generic spread yet
-          ...(parse(history.location.search) as any), // tslint:disable-line:no-any max-line-length Typescript cant handle generic spread yet,
-          ...(newState as any), // tslint:disable-line:no-any
+          ...(getInitialState && (getInitialState(this.props) as any)),
+          ...(parse(history.location.search) as any),
+          ...(newState as any),
         } as Partial<T>)
+        // tslint:enable:no-any
 
-        const nextLocation = {
-          ...history.location,
-          search,
+        const nextLocation = { ...history.location, search }
+        const parsedState = parse(search)
+        const previousParsedState = parse(this.state.previousSearch)
+        const shouldPush =
+          config &&
+          config.shouldPushState &&
+          config.shouldPushState(this.props, parsedState, previousParsedState)
+
+        if (shouldPush) {
+          history.push(nextLocation)
+        } else {
+          history.replace(nextLocation)
         }
-
-        config &&
-        config.shouldPushState &&
-        config.shouldPushState(this.props, parse(search), parse(this.state.previousSearch))
-          ? history.push(nextLocation)
-          : history.replace(nextLocation)
 
         this.onLocationChange()
       }

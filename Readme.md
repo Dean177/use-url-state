@@ -13,29 +13,29 @@ This package allows applications to retrieve the state from a react component an
 
 ## Installation
 
-To install with npm use 
+To install with npm use
 
 `npm install with-url-state --save`
 
-To install with yarn use 
+To install with yarn use
 
 `yarn add with-url-state`
 
 ## Usage
 
-Check out the [demo](https://dean177.github.io/with-url-state/), the [example/](https://github.com/Dean177/with-url-state/tree/master/example) directory, or play with it in [CodeSandbox](https://codesandbox.io/s/21z35p6pjp).
+Play with it in [CodeSandbox](https://codesandbox.io/s/18x4l87yx7) or check out the the [example/](https://github.com/Dean177/with-url-state/tree/master/example)
 
 Using javascript
 
 ```javascript
-import React from 'react';
+import React from 'react'
 import { withUrlState } from 'with-url-state'
 
-const enhance = withUrlState((props) => ({ color: 'blue' }))
+const enhance = withUrlState(props => ({ color: 'blue' }))
 
-export const UrlForm = enhance((props) => (
+export const UrlForm = enhance(props => (
   <div className="UrlForm">
-    <div className="current-state" style={{ backgroundColor: props.urlState.color}}>
+    <div className="current-state" style={{ backgroundColor: props.urlState.color }}>
       <div>{props.urlState.color}</div>
     </div>
     <div className="color-buttons">
@@ -66,7 +66,7 @@ const enhance = withUrlState<OwnProps, UrlState>((prop: OwnProps) => ({ color: '
 
 export const UrlForm = enhance((props: OwnProps & UrlStateProps<UrlState>) => (
   <div className="UrlForm">
-    <div className="current-state" style={{ backgroundColor: props.urlState.color}}>
+    <div className="current-state" style={{ backgroundColor: props.urlState.color }}>
       <div>{props.urlState.color}</div>
     </div>
     <div className="color-buttons">
@@ -82,11 +82,9 @@ export const UrlForm = enhance((props: OwnProps & UrlStateProps<UrlState>) => (
     </div>
   </div>
 ))
-
 ```
 
-Using the renderprop component 
-
+Using the renderprop component
 
 ```typescript jsx
 import React from 'react'
@@ -95,25 +93,29 @@ import { UrlState } from 'with-url-state'
 type OwnProps = {}
 type UrlState = { color: string }
 
-export const UrlForm = (props: OwnProps) => 
-  <UrlState initialState={{ color: 'green' }} render={({ setUrlState, urlState }) => 
-    <div className="UrlForm">
-      <div className="current-state" style={{ backgroundColor: urlState.color}}>
-        <div>{urlState.color}</div>
+export const UrlForm = (props: OwnProps) => (
+  <UrlState
+    initialState={{ color: 'green' }}
+    render={({ setUrlState, urlState }) => (
+      <div className="UrlForm">
+        <div className="current-state" style={{ backgroundColor: urlState.color }}>
+          <div>{urlState.color}</div>
+        </div>
+        <div className="color-buttons">
+          <button className="Red" onClick={() => setUrlState({ color: 'red' })}>
+            Red
+          </button>
+          <button className="Green" onClick={() => setUrlState({ color: 'green' })}>
+            Green
+          </button>
+          <button className="Blue" onClick={() => setUrlState({ color: 'blue' })}>
+            Blue
+          </button>
+        </div>
       </div>
-      <div className="color-buttons">
-        <button className="Red" onClick={() => setUrlState({ color: 'red' })}>
-          Red
-        </button>
-        <button className="Green" onClick={() => setUrlState({ color: 'green' })}>
-          Green
-        </button>
-        <button className="Blue" onClick={() => setUrlState({ color: 'blue' })}>
-          Blue
-        </button>
-      </div>
-    </div>
-  } />
+    )}
+  />
+)
 ```
 
 ## Motivation
@@ -121,7 +123,8 @@ export const UrlForm = (props: OwnProps) =>
 `with-url-state` automates the query parameter manipulations, simplifying URL sharing for search results, querying data or tracking a visible portion of a map.
 
 The api provided is:
+
 - based on [higer-order-components](https://reactjs.org/docs/higher-order-components.html) which makes it composable and testable
 - has a render-prop alternative for convenience
-- type-safe thanks to [Typescript](https://www.typescriptlang.org/)   
+- type-safe thanks to [Typescript](https://www.typescriptlang.org/)
 - very similar to [Reacts built in state](https://reactjs.org/docs/state-and-lifecycle.html) apis, so converting a component which already manages state is usually as simple as replacing `setState` with `setUrlState`!

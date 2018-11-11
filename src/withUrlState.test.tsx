@@ -38,7 +38,8 @@ const UrlBasedControls = (props: UrlStateProps<ControlState>) => (
   </div>
 )
 
-const parseQueryString: Parse<ControlState> = str => qs.parse(str, { ignoreQueryPrefix: true })
+const parseQueryString: Parse<ControlState> = str =>
+  qs.parse(str, { ignoreQueryPrefix: true })
 const stringifyState: Stringify<ControlState> = state =>
   qs.stringify(state, { addQueryPrefix: true })
 
@@ -55,7 +56,9 @@ describe('withUrlState', () => {
   })
 
   it('will not override any params which are already provided in the query string', () => {
-    const enhance = withUrlState<ControlState>(() => ({ color: 'Red' }), { history: testHistory })
+    const enhance = withUrlState<ControlState>(() => ({ color: 'Red' }), {
+      history: testHistory,
+    })
     const UrlConnectedControls = enhance(UrlBasedControls)
 
     expect(parseQueryString(window.location.search)).toEqual({ color: 'Blue' })
@@ -75,7 +78,10 @@ describe('withUrlState', () => {
 
     const wrapper = mount(<UrlConnectedControls />)
 
-    expect(parseQueryString(testHistory.location.search)).toEqual({ animal: 'Ant', color: 'Blue' })
+    expect(parseQueryString(testHistory.location.search)).toEqual({
+      animal: 'Ant',
+      color: 'Blue',
+    })
     expect(wrapper.find('.currentAnimal').text()).toBe('Ant')
     expect(wrapper.find('.currentColor').text()).toBe('Blue')
   })
@@ -89,7 +95,10 @@ describe('withUrlState', () => {
 
     mount(<UrlConnectedControls />)
 
-    expect(parseQueryString(testHistory.location.search)).toEqual({ animal: 'Ant', color: 'Blue' })
+    expect(parseQueryString(testHistory.location.search)).toEqual({
+      animal: 'Ant',
+      color: 'Blue',
+    })
   })
 
   it('provides the current urls state to the wrapped component', () => {
@@ -113,12 +122,18 @@ describe('withUrlState', () => {
     const wrapper = mount(<UrlConnectedControls />)
     expect(wrapper.find('.currentAnimal').text()).toBe('Ant')
     expect(wrapper.find('.currentColor').text()).toBe('Blue')
-    expect(parseQueryString(testHistory.location.search)).toEqual({ animal: 'Ant', color: 'Blue' })
+    expect(parseQueryString(testHistory.location.search)).toEqual({
+      animal: 'Ant',
+      color: 'Blue',
+    })
 
     wrapper.find('.Green').simulate('click')
     expect(wrapper.find('.currentAnimal').text()).toBe('Ant')
     expect(wrapper.find('.currentColor').text()).toBe('Green')
-    expect(parseQueryString(testHistory.location.search)).toEqual({ animal: 'Ant', color: 'Green' })
+    expect(parseQueryString(testHistory.location.search)).toEqual({
+      animal: 'Ant',
+      color: 'Green',
+    })
   })
 
   describe('config', () => {
@@ -202,9 +217,12 @@ describe('withUrlState', () => {
           push: (location: LocationDescriptorObject) => {}, // tslint:disable-line
           replace: (location: LocationDescriptorObject) => {}, // tslint:disable-line
         }
-        const enhance = withUrlState<ControlState>(() => ({ animal: 'Ant', color: 'Blue' }), {
-          history: unsubscribeHistory,
-        })
+        const enhance = withUrlState<ControlState>(
+          () => ({ animal: 'Ant', color: 'Blue' }),
+          {
+            history: unsubscribeHistory,
+          },
+        )
 
         const UrlConnectedControls = enhance(UrlBasedControls)
 
@@ -224,9 +242,10 @@ describe('withUrlState', () => {
             stringify: queryString.stringify,
           },
         }
-        const UrlConnectedControls = withUrlState<ControlState>(() => ({ color: 'Red' }), config)(
-          UrlBasedControls,
-        )
+        const UrlConnectedControls = withUrlState<ControlState>(
+          () => ({ color: 'Red' }),
+          config,
+        )(UrlBasedControls)
         expect(parseQueryString(testHistory.location.search)).toEqual({ color: 'Blue' })
 
         const wrapper = mount(<UrlConnectedControls />)
@@ -282,7 +301,10 @@ describe('withUrlState', () => {
                 const minPriceAsNumber = parseInt(stringyParams.min_price || '', 10)
                 return {
                   q: stringyParams.q || defaultQueryParameters.q,
-                  page: pageFromQuery !== undefined && !isNaN(pageFromQuery) ? pageFromQuery : 1,
+                  page:
+                    pageFromQuery !== undefined && !isNaN(pageFromQuery)
+                      ? pageFromQuery
+                      : 1,
                   sort: (stringyParams.sort as SortOptions) || defaultSort,
                   max_price: !isNaN(maxPriceAsNumber) ? maxPriceAsNumber : undefined,
                   min_price: !isNaN(minPriceAsNumber) ? minPriceAsNumber : undefined,
@@ -350,7 +372,7 @@ describe('withUrlState', () => {
         wrapper.update()
 
         expect(testHistory.location.search).toEqual(
-          '?q=Winchester&max_price=30&min_price=20&page=3&sort=NEARBY',
+          '?max_price=30&min_price=20&page=3&q=Winchester&sort=NEARBY',
         )
         expect(wrapper.find('.max_price').text()).toBe('30')
         expect(wrapper.find('.min_price').text()).toBe('20')
