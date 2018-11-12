@@ -1,7 +1,6 @@
 import {
   Hash,
   LocationDescriptorObject,
-  LocationListener,
   Pathname,
   Search,
   UnregisterCallback,
@@ -9,46 +8,45 @@ import {
 import qs from 'qs'
 import { useState, useEffect, ComponentType, createElement, ReactChild } from 'react'
 
-export type UrlStateProps<T> = {
-  setUrlState: (newState: T) => void
-  urlState: T
-}
-
 export type HistoryAdapter = {
   location: {
     pathname: Pathname
     search: Search
     hash: Hash
   }
-  listen: (listener: LocationListener) => UnregisterCallback
+  listen: (listener: () => void) => UnregisterCallback
   push: (location: LocationDescriptorObject) => void
   replace: (location: LocationDescriptorObject) => void
 }
 
 export const html5HistoryAdapter: HistoryAdapter = {
-  listen: (listener: LocationListener): UnregisterCallback => {
-    window.addEventListener('popstate', listener as () => void)
-    return () => window.removeEventListener('popstate', listener as () => void)
+  listen: (listener: () => void): UnregisterCallback => {
+    window.addEventListener('popstate', listener)
+    return () => window.removeEventListener('popstate', listener)
   },
   location: window.location,
-  push: ({ search }: LocationDescriptorObject) =>
-    window.history.pushState(window.history.state, document.title, search),
-  replace: ({ search }: LocationDescriptorObject) =>
-    window.history.replaceState(window.history.state, document.title, search),
+  push: ({ search }: LocationDescriptorObject) => {
+    window.history.pushState(window.history.state, document.title, search)
+    window.dispatchEvent(new Event('popstate'))
+  },
+  replace: ({ search }: LocationDescriptorObject) => {
+    window.history.replaceState(window.history.state, document.title, search)
+    window.dispatchEvent(new Event('popstate'))
+  },
 }
 
 export type Config<T> = {
   history: HistoryAdapter
   serialisation: {
-    parse: (queryString: string) => T
-    stringify: (state: T) => string
+    parse: (queryString: Search) => T
+    stringify: (state: T) => Search
   }
   shouldPushState: (next: T, current: T) => boolean
 }
 
 const alwaysReplaceState: Config<any>['shouldPushState'] = () => false
 
-const parseConfig = <T>(config: Partial<Config<T>> = {}): Config<T> => ({
+const parseConfig = <T extends {}>(config: Partial<Config<T>> = {}): Config<T> => ({
   history: config.history || html5HistoryAdapter,
   serialisation: config.serialisation || {
     parse: (queryString: string) => qs.parse(queryString, { ignoreQueryPrefix: true }),
@@ -76,15 +74,10 @@ export function useUrlState<T>(
         ...history.location,
         search: serialisation.stringify(search),
       })
-    },
-    [initialState],
-  )
-
-  useEffect(
-    () =>
-      history.listen(function onLocationChange() {
+      return history.listen(function onLocationChange() {
         setSearch(serialisation.parse(history.location.search))
-      }),
+      })
+    },
     [history],
   )
 
@@ -110,6 +103,11 @@ export type HocConfig<T, OP> = {
   history: HistoryAdapter
   serialisation: { parse: (queryString: string) => T; stringify: (state: T) => string }
   shouldPushState: (props: OP) => (next: T, current: T) => boolean
+}
+
+export type UrlStateProps<T> = {
+  setUrlState: (newState: T) => void
+  urlState: T
 }
 
 export const withUrlState = <T extends {}, OP = {}>(
