@@ -1,8 +1,18 @@
+## 3.0.0
+
+### Breaking changes
+
+WIP
+
+### New features
+
+In addition to the higher-order-component and render-prop APIs, a custom hook (`useUrlState`) is now provided that works almost the same way as the built in `useState` hook.
+
 ## 2.0.0
 
 ### Breaking changes
 
--The html5 history api is now used by default. This means that you no longer need to provide a `history` object has the first parameter.
+The html5 history api is now used by default. This means that you no longer need to provide a `history` object has the first parameter.
 In practice usually means you will need to drop the first parameter to `withUrlState`, and usage will remain the same.
 
 #### Before
