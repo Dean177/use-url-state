@@ -9,8 +9,6 @@ Lifts the state out of a react component and into the url
 
 ![color-example](./example/color-example.gif)
 
-This package allows applications to retrieve the state from a react component and appends it to the url.
-
 ## Installation
 
 To install with npm use
