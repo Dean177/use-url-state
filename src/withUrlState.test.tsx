@@ -1,4 +1,4 @@
-import { mount } from 'enzyme'
+import { render, fireEvent, cleanup, waitForElement } from 'react-testing-library'
 import {
   createBrowserHistory,
   createMemoryHistory,
@@ -10,7 +10,7 @@ import { flow } from 'lodash'
 import { interceptor } from 'props-interceptor'
 import qs from 'qs'
 import queryString from 'query-string'
-import React from 'react'
+import React, { ReactElement } from 'react'
 import {
   HistoryAdapter,
   withUrlState,
@@ -24,22 +24,36 @@ type ControlState = { animal?: string; color: string }
 
 const UrlBasedControls = (props: UrlStateProps<ControlState>) => (
   <div>
-    <div className="currentAnimal">{props.urlState.animal}</div>
-    <div className="currentColor">{props.urlState.color}</div>
-    <button className="Green" onClick={() => props.setUrlState({ color: 'Green' })}>
+    <div data-testid="currentAnimal">{props.urlState.animal}</div>
+    <div data-testid="currentColor">{props.urlState.color}</div>
+    <button
+      data-testid="Green"
+      onClick={() => props.setUrlState({ ...props.urlState, color: 'Green' })}
+    >
       Green
     </button>
-    <button className="Red" onClick={() => props.setUrlState({ color: 'Red' })}>
+    <button
+      data-testid="Red"
+      onClick={() => props.setUrlState({ ...props.urlState, color: 'Red' })}
+    >
       Red
     </button>
   </div>
 )
 
+// See https://github.com/kentcdodds/react-testing-library/issues/215 for why this is necessary
+const effectfulRender = (jsx: ReactElement<any>) => {
+  const wrapper = render(jsx)
+  wrapper.rerender(jsx)
+  return wrapper
+}
+
 const parseQueryString = (str: any) => qs.parse(str, { ignoreQueryPrefix: true })
 
-describe('withUrlState', () => {
-  let testHistory: History = null as any
+describe('useUrlState', () => {
+  afterEach(cleanup)
 
+  let testHistory: History = null as any
   beforeEach(() => {
     testHistory = createBrowserHistory()
     const newLocation: LocationDescriptorObject = {
@@ -53,16 +67,19 @@ describe('withUrlState', () => {
     expect(parseQueryString(testHistory.location.search)).toEqual({ color: 'Blue' })
   })
 
-  it('will not override any params which are already provided in the query string', () => {
-    const enhance = withUrlState<ControlState>(() => ({ color: 'Red' }), {
-      history: testHistory,
-    })
-    const UrlConnectedControls = enhance(UrlBasedControls)
+  it('will not override any params which are already provided in the query string', async () => {
+    const UrlConnectedControls = () => {
+      const [urlState, setUrlState] = useUrlState<ControlState>(
+        { color: 'Red' },
+        { history: testHistory },
+      )
+      return <UrlBasedControls setUrlState={setUrlState} urlState={urlState} />
+    }
 
-    const wrapper = mount(<UrlConnectedControls />)
+    const wrapper = effectfulRender(<UrlConnectedControls />)
 
     expect(parseQueryString(window.location.search)).toEqual({ color: 'Blue' })
-    expect(wrapper.find('.currentColor').text()).toBe('Blue')
+    expect(wrapper.getByTestId('currentColor').textContent).toBe('Blue')
   })
 
   it('will append any additional any params which are not provided in the querystring', () => {
@@ -74,23 +91,26 @@ describe('withUrlState', () => {
       return <UrlBasedControls urlState={urlState} setUrlState={setUrlState} />
     }
 
-    const wrapper = mount(<UrlConnectedControls />)
+    const wrapper = effectfulRender(<UrlConnectedControls />)
 
     expect(parseQueryString(testHistory.location.search)).toEqual({
       animal: 'Ant',
       color: 'Blue',
     })
-    expect(wrapper.find('.currentAnimal').text()).toBe('Ant')
-    expect(wrapper.find('.currentColor').text()).toBe('Blue')
+    expect(wrapper.getByTestId('currentAnimal').textContent).toBe('Ant')
+    expect(wrapper.getByTestId('currentColor').textContent).toBe('Blue')
   })
 
   it('sets the url with the initial state', () => {
-    const UrlConnectedControls = withUrlState<ControlState>(
-      () => ({ animal: 'Ant', color: 'Blue' }),
-      { history: testHistory },
-    )(UrlBasedControls)
+    const UrlConnectedControls = () => {
+      const [urlState, setUrlState] = useUrlState<ControlState>(
+        { animal: 'Ant', color: 'Blue' },
+        { history: testHistory },
+      )
+      return <UrlBasedControls setUrlState={setUrlState} urlState={urlState} />
+    }
 
-    mount(<UrlConnectedControls />)
+    effectfulRender(<UrlConnectedControls />)
 
     expect(parseQueryString(testHistory.location.search)).toEqual({
       animal: 'Ant',
@@ -99,34 +119,42 @@ describe('withUrlState', () => {
   })
 
   it('provides the current urls state to the wrapped component', () => {
-    const UrlConnectedControls = withUrlState<ControlState>(
-      () => ({ animal: 'Ant', color: 'Blue' }),
-      { history: testHistory },
-    )(UrlBasedControls)
+    const UrlConnectedControls = () => {
+      const [urlState, setUrlState] = useUrlState<ControlState>(
+        { animal: 'Ant', color: 'Blue' },
+        { history: testHistory },
+      )
+      return <UrlBasedControls setUrlState={setUrlState} urlState={urlState} />
+    }
 
-    const wrapper = mount(<UrlConnectedControls />)
+    const wrapper = render(<UrlConnectedControls />)
 
-    expect(wrapper.find('.currentAnimal').text()).toBe('Ant')
-    expect(wrapper.find('.currentColor').text()).toBe('Blue')
+    expect(wrapper.getByTestId('currentAnimal').textContent).toBe('Ant')
+    expect(wrapper.getByTestId('currentColor').textContent).toBe('Blue')
   })
 
   it('updates the url when the wrapped component updates the state', () => {
-    const UrlConnectedControls = withUrlState<ControlState>(
-      () => ({ animal: 'Ant', color: 'Blue' }),
-      { history: testHistory },
-    )(UrlBasedControls)
+    const UrlConnectedControls = () => {
+      const [urlState, setUrlState] = useUrlState<ControlState>(
+        { animal: 'Ant', color: 'Blue' },
+        { history: testHistory },
+      )
+      return <UrlBasedControls setUrlState={setUrlState} urlState={urlState} />
+    }
 
-    const wrapper = mount(<UrlConnectedControls />)
-    expect(wrapper.find('.currentAnimal').text()).toBe('Ant')
-    expect(wrapper.find('.currentColor').text()).toBe('Blue')
+    const wrapper = effectfulRender(<UrlConnectedControls />)
+    expect(wrapper.getByTestId('currentAnimal').textContent).toBe('Ant')
+    expect(wrapper.getByTestId('currentColor').textContent).toBe('Blue')
     expect(parseQueryString(testHistory.location.search)).toEqual({
       animal: 'Ant',
       color: 'Blue',
     })
 
-    wrapper.find('.Green').simulate('click')
-    expect(wrapper.find('.currentAnimal').text()).toBe('Ant')
-    expect(wrapper.find('.currentColor').text()).toBe('Green')
+    fireEvent.click(wrapper.getByTestId('Green'))
+    wrapper.rerender(<UrlConnectedControls />)
+
+    expect(wrapper.getByTestId('currentAnimal').textContent).toBe('Ant')
+    expect(wrapper.getByTestId('currentColor').textContent).toBe('Green')
     expect(parseQueryString(testHistory.location.search)).toEqual({
       animal: 'Ant',
       color: 'Green',
@@ -147,7 +175,7 @@ describe('withUrlState', () => {
           withUrlState<ControlState, {}>(() => ({ color: 'Red' }), hocConfig),
         )(UrlBasedControls)
 
-        mount(<UrlConnectedControls />)
+        effectfulRender(<UrlConnectedControls />)
         const { setUrlState } = propSpy.mock.calls[0][0]
         setUrlState({ color: 'Green' })
         setUrlState({ color: 'Blue' })
@@ -156,39 +184,23 @@ describe('withUrlState', () => {
       })
 
       it('allows comparison of the *parsed* state to be applied and the current state', () => {
-        const parse = (str: string): ControlState => {
-          const state = qs.parse(str, { ignoreQueryPrefix: true })
-          return { ...state, animal: state.animal || 'Empty' }
-        }
-        const stringify = (state: Partial<ControlState>) => {
-          const { color, animal } = state
-          const filteredState = { color, animal: animal === 'Empty' ? undefined : animal }
-          return qs.stringify(filteredState)
-        }
         const shouldPushState = jest.fn()
-
-        const hocConfig: Partial<HocConfig<ControlState, {}>> = {
-          history: testHistory,
-          shouldPushState: () => shouldPushState,
-          serialisation: { parse, stringify },
-        }
-
-        const propSpy = jest.fn()
+        const capturedProps: Array<UrlStateProps<ControlState>> = []
         const UrlConnectedControls = flow(
-          interceptor((props: UrlStateProps<ControlState>) => propSpy(props)),
-          withUrlState<ControlState>(
-            () => ({ animal: 'bear', color: 'blue' }),
-            hocConfig,
-          ),
+          interceptor((props: UrlStateProps<ControlState>) => capturedProps.push(props)),
+          withUrlState<ControlState>(() => ({ animal: 'Bat', color: 'blue' }), {
+            history: testHistory,
+            shouldPushState: () => shouldPushState,
+          }),
         )(UrlBasedControls)
 
-        mount(<UrlConnectedControls />)
-        const { setUrlState } = propSpy.mock.calls[0][0]
-        setUrlState({ animal: 'Cat', otherErroneousParam: 'foo' })
+        effectfulRender(<UrlConnectedControls />)
+        const { setUrlState, urlState } = capturedProps[0]
 
-        const next = { color: 'Blue', animal: 'Cat' }
-        const current = { color: 'Blue', animal: 'Empty' }
-        expect(shouldPushState).toBeCalledWith({}, next, current)
+        const nextState = { animal: 'Cat', color: 'cyan' }
+        setUrlState(nextState)
+
+        expect(shouldPushState).toBeCalledWith(nextState, urlState)
       })
     })
 
@@ -200,7 +212,7 @@ describe('withUrlState', () => {
         })
         const UrlConnectedControls = enhance(UrlBasedControls)
 
-        mount(<UrlConnectedControls />)
+        effectfulRender(<UrlConnectedControls />)
 
         expect(parseQueryString(memoryHistory.location.search)).toEqual({ color: 'Red' })
         expect(memoryHistory.entries.length).toBe(1)
@@ -218,6 +230,7 @@ describe('withUrlState', () => {
           push: (location: LocationDescriptorObject) => {}, // tslint:disable-line
           replace: (location: LocationDescriptorObject) => {}, // tslint:disable-line
         }
+
         const enhance = withUrlState<ControlState>(
           () => ({ animal: 'Ant', color: 'Blue' }),
           {
@@ -227,8 +240,8 @@ describe('withUrlState', () => {
 
         const UrlConnectedControls = enhance(UrlBasedControls)
 
-        const wrapper = mount(<UrlConnectedControls />)
-        wrapper.unmount()
+        const { unmount } = render(<UrlConnectedControls />)
+        unmount()
 
         expect(unsubscribeCallback).toHaveBeenCalled()
       })
@@ -249,10 +262,10 @@ describe('withUrlState', () => {
         )(UrlBasedControls)
         expect(parseQueryString(testHistory.location.search)).toEqual({ color: 'Blue' })
 
-        const wrapper = mount(<UrlConnectedControls />)
+        const wrapper = render(<UrlConnectedControls />)
 
         expect(parseQueryString(testHistory.location.search)).toEqual({ color: 'Blue' })
-        expect(wrapper.find('.currentColor').text()).toBe('Blue')
+        expect(wrapper.getByTestId('currentColor').textContent).toBe('Blue')
       })
 
       it('supports complex serialisation workflows', () => {
@@ -339,11 +352,11 @@ describe('withUrlState', () => {
 
         const QueryParamComponent = (props: UrlStateProps<QueryParams>) => (
           <div>
-            <div className="max_price">{props.urlState.max_price}</div>
-            <div className="min_price">{props.urlState.min_price}</div>
-            <div className="page">{props.urlState.page}</div>
-            <div className="sort">{props.urlState.sort}</div>
-            <div className="q">{props.urlState.q}</div>
+            <div data-testid="max_price">{props.urlState.max_price}</div>
+            <div data-testid="min_price">{props.urlState.min_price}</div>
+            <div data-testid="page">{props.urlState.page}</div>
+            <div data-testid="sort">{props.urlState.sort}</div>
+            <div data-testid="q">{props.urlState.q}</div>
           </div>
         )
 
@@ -352,15 +365,15 @@ describe('withUrlState', () => {
           config,
         )(QueryParamComponent)
 
-        const wrapper = mount(<UrlConnectedControls />)
+        const wrapper = effectfulRender(<UrlConnectedControls />)
 
         expect(testHistory.location.search).toEqual('?q=Winchester')
 
-        expect(wrapper.find('.max_price').text()).toBe('')
-        expect(wrapper.find('.min_price').text()).toBe('')
-        expect(wrapper.find('.page').text()).toBe('1')
-        expect(wrapper.find('.q').text()).toBe('Winchester')
-        expect(wrapper.find('.sort').text()).toBe('BEST_MATCH')
+        expect(wrapper.getByTestId('max_price').textContent).toBe('')
+        expect(wrapper.getByTestId('min_price').textContent).toBe('')
+        expect(wrapper.getByTestId('page').textContent).toBe('1')
+        expect(wrapper.getByTestId('q').textContent).toBe('Winchester')
+        expect(wrapper.getByTestId('sort').textContent).toBe('BEST_MATCH')
 
         testHistory.replace({
           ...testHistory.location,
@@ -371,16 +384,15 @@ describe('withUrlState', () => {
             sort: 'NEARBY',
           }),
         })
-        wrapper.update()
 
         expect(testHistory.location.search).toEqual(
           '?max_price=30&min_price=20&page=3&q=Winchester&sort=NEARBY',
         )
-        expect(wrapper.find('.max_price').text()).toBe('30')
-        expect(wrapper.find('.min_price').text()).toBe('20')
-        expect(wrapper.find('.page').text()).toBe('3')
-        expect(wrapper.find('.q').text()).toBe('Winchester')
-        expect(wrapper.find('.sort').text()).toBe('NEARBY')
+        expect(wrapper.getByTestId('max_price').textContent).toBe('30')
+        expect(wrapper.getByTestId('min_price').textContent).toBe('20')
+        expect(wrapper.getByTestId('page').textContent).toBe('3')
+        expect(wrapper.getByTestId('q').textContent).toBe('Winchester')
+        expect(wrapper.getByTestId('sort').textContent).toBe('NEARBY')
       })
     })
   })
@@ -389,11 +401,13 @@ describe('withUrlState', () => {
     const listener = () => {} // tslint:disable-line
     let addTemp = window.addEventListener
     let removeTemp = window.removeEventListener
+    let dispatchTemp = window.dispatchEvent
     let historyPushTemp = window.history.pushState
     let historyReplaceTemp = window.history.replaceState
 
     beforeEach(() => {
       window.addEventListener = jest.fn()
+      window.dispatchEvent = jest.fn()
       window.removeEventListener = jest.fn()
       window.history.pushState = jest.fn()
       window.history.replaceState = jest.fn()
@@ -401,6 +415,7 @@ describe('withUrlState', () => {
 
     afterEach(() => {
       window.addEventListener = addTemp
+      window.dispatchEvent = dispatchTemp
       window.removeEventListener = removeTemp
       window.history.pushState = historyPushTemp
       window.history.replaceState = historyReplaceTemp
@@ -422,6 +437,7 @@ describe('withUrlState', () => {
       html5HistoryAdapter.push({ search: 'foo=bar' })
 
       expect(window.history.pushState).toHaveBeenCalled()
+      expect(window.dispatchEvent).toHaveBeenCalled()
     })
 
     it(`defers to the 'history' global when replacing an event`, () => {
@@ -429,6 +445,7 @@ describe('withUrlState', () => {
       html5HistoryAdapter.replace({ search: 'foo=bar' })
 
       expect(window.history.replaceState).toHaveBeenCalled()
+      expect(window.dispatchEvent).toHaveBeenCalled()
     })
   })
 })

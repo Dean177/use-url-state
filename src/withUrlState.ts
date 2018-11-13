@@ -19,6 +19,10 @@ export type HistoryAdapter = {
   replace: (location: LocationDescriptorObject) => void
 }
 
+declare var window: Window & {
+  Event: typeof Event
+}
+
 export const html5HistoryAdapter: HistoryAdapter = {
   listen: (listener: () => void): UnregisterCallback => {
     window.addEventListener('popstate', listener)
@@ -27,11 +31,11 @@ export const html5HistoryAdapter: HistoryAdapter = {
   location: window.location,
   push: ({ search }: LocationDescriptorObject) => {
     window.history.pushState(window.history.state, document.title, search)
-    window.dispatchEvent(new Event('popstate'))
+    window.dispatchEvent(new window.Event('popstate'))
   },
   replace: ({ search }: LocationDescriptorObject) => {
     window.history.replaceState(window.history.state, document.title, search)
-    window.dispatchEvent(new Event('popstate'))
+    window.dispatchEvent(new window.Event('popstate'))
   },
 }
 
@@ -62,7 +66,7 @@ export function useUrlState<T>(
   const { history, serialisation, shouldPushState } = parseConfig(config)
 
   // tslint:disable:no-any Typescript cant handle generic spread yet
-  const [search, setSearch] = useState({
+  const [currentState, setSearch] = useState({
     ...(initialState as any),
     ...(serialisation.parse(history.location.search) as any),
   } as T)
@@ -72,7 +76,7 @@ export function useUrlState<T>(
     () => {
       history.replace({
         ...history.location,
-        search: serialisation.stringify(search),
+        search: serialisation.stringify(currentState),
       })
       return history.listen(function onLocationChange() {
         setSearch(serialisation.parse(history.location.search))
@@ -87,12 +91,12 @@ export function useUrlState<T>(
       search: serialisation.stringify(newState),
     }
 
-    shouldPushState(newState, search)
+    shouldPushState(newState, currentState)
       ? history.push(nextLocation)
       : history.replace(nextLocation)
   }
 
-  return [search, setUrlState]
+  return [currentState, setUrlState]
 }
 
 export type PropEnhancer<Props, MappedProps> = (
