@@ -1,45 +1,20 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-}
-
-body, #root, .App, .UrlForm {
+body,
+#root,
+.UrlForm {
   align-items: center;
   display: flex;
   flex-direction: column;
   flex: 1;
-  height: 100%;
+  font-family: sans-serif;
+  height: 100vh;
   width: 100%;
-}
-
-.App {
-  flex-direction: row;
-}
-
-.side-nav {
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
-}
-
-.side-nav a {
-  padding-bottom: 6px;
-  padding-top: 6px;
-}
-
-a:visited{
-  color: blue;
-}
-
-.content {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
+  padding: 0;
+  margin: 0;
 }
 
 .UrlForm {
-  margin: 30px;
+  align-items: center;
+  justify-content: center;
 }
 
 .current-state {
@@ -47,10 +22,11 @@ a:visited{
   color: white;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  font-size: 26px;
   justify-content: center;
   height: 100px;
   margin-bottom: 30px;
+  text-transform: capitalize;
   width: 250px;
 }
 
@@ -58,4 +34,11 @@ a:visited{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+button {
+  font-size: 18px;
+  margin-left: 10px;
+  margin-right: 10px;
+  padding: 15px 25px;
 }

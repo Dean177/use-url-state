@@ -6,8 +6,8 @@ type OwnProps = {}
 type LiftedState = { color: string }
 
 export const UrlForm = (props: OwnProps & UrlStateProps<LiftedState>) => (
-  <div className="UrlForm">
-    <div className="current-state" style={{ backgroundColor: props.urlState.color }}>
+  <div className="UrlForm" style={{ backgroundColor: props.urlState.color }}>
+    <div className="current-state">
       <div>{props.urlState.color}</div>
     </div>
     <div className="color-buttons">
@@ -20,9 +20,6 @@ export const UrlForm = (props: OwnProps & UrlStateProps<LiftedState>) => (
       <button className="Blue" onClick={() => props.setUrlState({ color: 'blue' })}>
         Blue
       </button>
-      <button className="Purple" onClick={() => props.setUrlState({ color: 'purple' })}>
-        Purple
-      </button>
     </div>
   </div>
 )
@@ -31,10 +28,4 @@ const EnhancedUrlForm = withUrlState<LiftedState, OwnProps>(() => ({ color: 'blu
   UrlForm,
 )
 
-export default () => (
-  <div className="App">
-    <div className="content">
-      <EnhancedUrlForm />
-    </div>
-  </div>
-)
+export default () => <EnhancedUrlForm />
