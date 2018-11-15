@@ -20,19 +20,27 @@ import {
   Parse,
   Stringify,
   html5HistoryAdapter,
+  HigherOrderConfig,
 } from './withUrlState'
 
-type ControlState = { animal?: string; color: string }
 declare const global: { window: Window }
+
+type ControlState = { animal?: string; color: string }
 
 const UrlBasedControls = (props: UrlStateProps<ControlState>) => (
   <div>
     <div className="currentAnimal">{props.urlState.animal}</div>
     <div className="currentColor">{props.urlState.color}</div>
-    <button className="Green" onClick={() => props.setUrlState({ color: 'Green' })}>
+    <button
+      className="Green"
+      onClick={() => props.setUrlState({ ...props.urlState, color: 'Green' })}
+    >
       Green
     </button>
-    <button className="Red" onClick={() => props.setUrlState({ color: 'Red' })}>
+    <button
+      className="Red"
+      onClick={() => props.setUrlState({ ...props.urlState, color: 'Red' })}
+    >
       Red
     </button>
   </div>
@@ -40,8 +48,6 @@ const UrlBasedControls = (props: UrlStateProps<ControlState>) => (
 
 const parseQueryString: Parse<ControlState> = str =>
   qs.parse(str, { ignoreQueryPrefix: true })
-const stringifyState: Stringify<ControlState> = state =>
-  qs.stringify(state, { addQueryPrefix: true })
 
 describe('withUrlState', () => {
   let testHistory: History = null as any
@@ -56,7 +62,7 @@ describe('withUrlState', () => {
   })
 
   it('will not override any params which are already provided in the query string', () => {
-    const enhance = withUrlState<ControlState>(() => ({ color: 'Red' }), {
+    const enhance = withUrlState<ControlState, {}>(() => ({ color: 'Red' }), {
       history: testHistory,
     })
     const UrlConnectedControls = enhance(UrlBasedControls)
@@ -70,7 +76,7 @@ describe('withUrlState', () => {
   })
 
   it('will append any additional any params which are not provided in the querystring', () => {
-    const UrlConnectedControls = withUrlState<ControlState>(
+    const UrlConnectedControls = withUrlState<ControlState, {}>(
       () => ({ animal: 'Ant', color: 'Blue' }),
       { history: testHistory },
     )(UrlBasedControls)
@@ -87,7 +93,7 @@ describe('withUrlState', () => {
   })
 
   it('sets the url with the initial state', () => {
-    const UrlConnectedControls = withUrlState<ControlState>(
+    const UrlConnectedControls = withUrlState<ControlState, {}>(
       () => ({ animal: 'Ant', color: 'Blue' }),
       { history: testHistory },
     )(UrlBasedControls)
@@ -102,7 +108,7 @@ describe('withUrlState', () => {
   })
 
   it('provides the current urls state to the wrapped component', () => {
-    const UrlConnectedControls = withUrlState<ControlState>(
+    const UrlConnectedControls = withUrlState<ControlState, {}>(
       () => ({ animal: 'Ant', color: 'Blue' }),
       { history: testHistory },
     )(UrlBasedControls)
@@ -114,7 +120,7 @@ describe('withUrlState', () => {
   })
 
   it('updates the url when the wrapped component updates the state', () => {
-    const UrlConnectedControls = withUrlState<ControlState>(
+    const UrlConnectedControls = withUrlState<ControlState, {}>(
       () => ({ animal: 'Ant', color: 'Blue' }),
       { history: testHistory },
     )(UrlBasedControls)
@@ -143,9 +149,9 @@ describe('withUrlState', () => {
         const memoryHistory = createMemoryHistory()
         const UrlConnectedControls = flow(
           interceptor((props: UrlStateProps<ControlState>) => propSpy(props)),
-          withUrlState<ControlState>(() => ({ color: 'Red' }), {
+          withUrlState<ControlState, {}>(() => ({ color: 'Red' }), {
             history: memoryHistory,
-            shouldPushState: () => true,
+            shouldPushState: () => (n: ControlState, c: ControlState) => true,
           }),
         )(UrlBasedControls)
 
@@ -158,11 +164,11 @@ describe('withUrlState', () => {
       })
 
       it('allows comparison of the *parsed* state to be applied and the current state', () => {
-        const parse = (str: string): Partial<ControlState> => {
+        const parse = (str: string): ControlState => {
           const state = qs.parse(str, { ignoreQueryPrefix: true })
           return { ...state, animal: state.animal || 'Empty' }
         }
-        const stringify = (state: Partial<ControlState>) => {
+        const stringify = (state: ControlState) => {
           const { color, animal } = state
           const filteredState = { color, animal: animal === 'Empty' ? undefined : animal }
           return qs.stringify(filteredState)
@@ -171,30 +177,33 @@ describe('withUrlState', () => {
 
         const config = {
           history: testHistory,
-          shouldPushState,
+          shouldPushState: () => shouldPushState,
           serialisation: { parse, stringify },
         }
 
-        const propSpy = jest.fn()
+        const capturedProps: Array<UrlStateProps<ControlState>> = []
         const UrlConnectedControls = flow(
-          interceptor((props: UrlStateProps<ControlState>) => propSpy(props)),
-          withUrlState<ControlState>(() => ({ animal: 'bear', color: 'blue' }), config),
+          interceptor((props: UrlStateProps<ControlState>) => capturedProps.push(props)),
+          withUrlState<ControlState, {}>(
+            () => ({ animal: 'bear', color: 'blue' }),
+            config,
+          ),
         )(UrlBasedControls)
 
         mount(<UrlConnectedControls />)
-        const { setUrlState } = propSpy.mock.calls[0][0]
-        setUrlState({ animal: 'Cat', otherErroneousParam: 'foo' })
+        const { setUrlState } = capturedProps[0]
+        const newState = { animal: 'Cat', otherErroneousParam: 'foo' } as any
+        setUrlState(newState)
 
-        const next = { color: 'Blue', animal: 'Cat' }
         const current = { color: 'Blue', animal: 'Empty' }
-        expect(shouldPushState).toBeCalledWith({}, next, current)
+        expect(shouldPushState).toBeCalledWith(newState, current)
       })
     })
 
     describe('history', () => {
       it('can accept a history provider to use alternate implementations', () => {
         const memoryHistory = createMemoryHistory()
-        const enhance = withUrlState<ControlState>(() => ({ color: 'Red' }), {
+        const enhance = withUrlState<ControlState, {}>(() => ({ color: 'Red' }), {
           history: memoryHistory,
         })
         const UrlConnectedControls = enhance(UrlBasedControls)
@@ -217,7 +226,7 @@ describe('withUrlState', () => {
           push: (location: LocationDescriptorObject) => {}, // tslint:disable-line
           replace: (location: LocationDescriptorObject) => {}, // tslint:disable-line
         }
-        const enhance = withUrlState<ControlState>(
+        const enhance = withUrlState<ControlState, {}>(
           () => ({ animal: 'Ant', color: 'Blue' }),
           {
             history: unsubscribeHistory,
@@ -235,14 +244,14 @@ describe('withUrlState', () => {
 
     describe('serialisation', () => {
       it('accepts a custom parse and stringify', () => {
-        const config = {
+        const config: Partial<HigherOrderConfig<ControlState, {}>> = {
           history: testHistory,
           serialisation: {
-            parse: queryString.parse,
+            parse: queryString.parse as (s: String) => ControlState,
             stringify: queryString.stringify,
           },
         }
-        const UrlConnectedControls = withUrlState<ControlState>(
+        const UrlConnectedControls = withUrlState<ControlState, {}>(
           () => ({ color: 'Red' }),
           config,
         )(UrlBasedControls)
@@ -262,13 +271,15 @@ describe('withUrlState', () => {
           | 'ENDING_SOON'
           | 'HIGHEST_PAY'
           | 'LOWEST_PAY'
+
         type QueryParams = {
-          q: string
+          q?: string
           page: number
           sort: SortOptions
           min_price?: number
           max_price?: number
         }
+
         const defaultSort: SortOptions = 'BEST_MATCH'
         const defaultQueryParameters: QueryParams = {
           q: 'Winchester',
@@ -286,7 +297,7 @@ describe('withUrlState', () => {
           }
         }
 
-        const config: Config<QueryParams> = {
+        const config: Partial<HigherOrderConfig<QueryParams, {}>> = {
           history: testHistory,
           serialisation: {
             parse: (queryStr: string): QueryParams => {
@@ -313,7 +324,7 @@ describe('withUrlState', () => {
                 return defaultQueryParameters
               }
             },
-            stringify: (state: Partial<QueryParams>) => {
+            stringify: (state: QueryParams) => {
               const { max_price, min_price } = state
               const minAndMaxPrice =
                 min_price && max_price
@@ -345,7 +356,7 @@ describe('withUrlState', () => {
           </div>
         )
 
-        const UrlConnectedControls = withUrlState<QueryParams>(
+        const UrlConnectedControls = withUrlState<QueryParams, {}>(
           () => defaultQueryParameters,
           config,
         )(QueryParamComponent)

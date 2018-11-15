@@ -60,7 +60,6 @@
       "json"
     ],
     "setupTestFrameworkScriptFile": "<rootDir>/setupTestFramework.js",
-    "testEnvironment": "node",
     "testMatch": [
       "<rootDir>/src/**/?(*.)(spec|test).ts?(x)"
     ],

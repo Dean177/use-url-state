@@ -4,7 +4,13 @@
   "compilerOptions": {
     "module": "esnext",
     "outDir": "build/dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "allowJs": true,
+    "skipLibCheck": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "preserve"
   },
   "exclude": [
     "node_modules",
@@ -12,5 +18,8 @@
     "webpack",
     "jest",
     "src/setupTests.ts"
+  ],
+  "include": [
+    "src"
   ]
 }
