@@ -12,6 +12,30 @@ body,
   margin: 0;
 }
 
+button {
+  font-size: 18px;
+  padding: 15px 25px;
+  margin: 0;
+}
+
+.example-buttons {
+  background-color: black;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.example-buttons button {
+  background-color: black;
+  border: none;
+  color: white;
+}
+
+.example-buttons button.active {
+  color: orange;
+}
+
+
 .UrlForm {
   align-items: center;
   justify-content: center;
@@ -36,9 +60,9 @@ body,
   justify-content: space-between;
 }
 
-button {
-  font-size: 18px;
+.color-buttons > * {
   margin-left: 10px;
   margin-right: 10px;
-  padding: 15px 25px;
 }
+
+
