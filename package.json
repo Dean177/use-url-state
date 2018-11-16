@@ -103,8 +103,8 @@
   "types": "dist/withUrlState.d.ts",
   "scripts": {
     "build": "rm -rf dist && tsc && yarn build:docs",
-    "build:docs": "rm -rf docs && cd example && yarn && yarn build",
-    "deploy:docs": "gh-pages -d example/build",
+    "build:demo": "rm -rf demo && cd example && yarn && yarn build && mv build ../demo",
+    "deploy:demo": "gh-pages -d demo",
     "lint": "tslint --fix",
     "prettify": "prettier --parser typescript --write",
     "format": "yarn lint src/**/*.ts src/**/*.tsx example/src/**/*.ts example/src/**/*.tsx  && yarn prettify src/**/*.ts src/**/*.tsx example/src/**/*.ts example/src/**/*.tsx",
