@@ -3,8 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
+    "@types/react-leaflet": "1.1.6",
+    "leaflet": "1.3.4",
     "react": "16.6.3",
     "react-dom": "16.6.3",
+    "react-leaflet": "2.1.2",
+    "with-async": "0.7.0",
     "with-url-state": "file:.."
   },
   "devDependencies": {
