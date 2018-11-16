@@ -6,7 +6,7 @@
 
 Lifts the state out of a react component and into the url
 
-![color-example](./example/color-example.gif)
+![color-example](./demo/color-example.gif)
 
 ## Installation
 
