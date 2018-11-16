@@ -20,7 +20,7 @@ To install with yarn use
 
 ## Usage
 
-Check out the the [examples/](https://github.com/Dean177/with-url-state/tree/master/example) or play with it in [CodeSandbox](https://codesandbox.io/s/18x4l87yx7). 
+Check out the the [demo](https://dean177.github.io/with-url-state/) view the code in the [demo](https://github.com/Dean177/with-url-state/tree/master/example) or play with it in [CodeSandbox](https://codesandbox.io/s/18x4l87yx7). 
 
 Using javascript
 
