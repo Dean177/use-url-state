@@ -22,7 +22,7 @@
   },
   "exclude": [
     "dist",
-    "example",
+    "demo",
     "node_modules",
     "**/*.test.tsx"
   ]
