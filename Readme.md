@@ -23,7 +23,7 @@ To install with yarn use
 
 ## Usage
 
-Play with it in [CodeSandbox](https://codesandbox.io/s/18x4l87yx7) or check out the the [example/](https://github.com/Dean177/with-url-state/tree/master/example)
+Check out the the [examples/](https://github.com/Dean177/with-url-state/tree/master/example) or play with it in [CodeSandbox](https://codesandbox.io/s/18x4l87yx7). 
 
 Using javascript
 
