@@ -17,7 +17,7 @@
     "@types/react-dom": "16.0.9",
     "@types/react-leaflet": "1.1.6",
     "react-scripts": "2.1.1",
-    "typescript": "3.1.6"
+    "typescript": "3.2.1"
   },
   "homepage": "https://dean177.github.io/with-url-state",
   "scripts": {

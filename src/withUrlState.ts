@@ -87,26 +87,24 @@ export type Props<T> = {
 export class UrlState<T> extends Component<Props<T>, T> {
   history: HistoryAdapter
   state: T
-  unsubscribe: () => void
+  unsubscribe: (() => void) | null = null
 
   constructor(props: Props<T>) {
     super(props)
     const { history, serialisation } = parseConfig(this.props.config)
     this.history = history
-    this.unsubscribe = this.history.listen(this.onLocationChange)
 
     // tslint:disable:no-any Typescript cant handle generic spread yet
-    const state = {
+    this.state = {
       ...(props.initialState as any),
       ...(serialisation.parse(history.location.search) as any),
     } as T
     // tslint:enable:no-any
-
-    this.state = state
   }
 
   componentDidMount(): void {
     const { serialisation } = parseConfig(this.props.config)
+    this.unsubscribe = this.history.listen(this.onLocationChange)
     this.history.replace({
       ...this.history.location,
       search: serialisation.stringify(this.state),
@@ -115,9 +113,10 @@ export class UrlState<T> extends Component<Props<T>, T> {
 
   componentDidUpdate(): void {
     const { history, serialisation } = parseConfig(this.props.config)
-
     if (this.history !== history) {
-      this.unsubscribe()
+      if (this.unsubscribe != null) {
+        this.unsubscribe()
+      }
       this.unsubscribe = history.listen(this.onLocationChange)
       const state = {
         ...(this.props.initialState as any), // tslint:disable-line:no-any
