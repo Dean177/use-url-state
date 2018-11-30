@@ -7,7 +7,7 @@
     "react": "16.6.3",
     "react-dom": "16.6.3",
     "react-leaflet": "2.1.2",
-    "with-async": "0.7.0",
+    "with-async": "0.8.0",
     "with-url-state": "file:.."
   },
   "devDependencies": {
@@ -23,7 +23,6 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
   "browserslist": [
