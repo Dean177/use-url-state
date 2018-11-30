@@ -8,6 +8,10 @@ import {
 import qs from 'qs'
 import { useState, useEffect, ComponentType, createElement, ReactChild } from 'react'
 
+declare var window: Window & {
+  Event: typeof Event
+}
+
 export type HistoryAdapter = {
   location: {
     pathname: Pathname
@@ -17,10 +21,6 @@ export type HistoryAdapter = {
   listen: (listener: () => void) => UnregisterCallback
   push: (location: LocationDescriptorObject) => void
   replace: (location: LocationDescriptorObject) => void
-}
-
-declare var window: Window & {
-  Event: typeof Event
 }
 
 export const html5HistoryAdapter: HistoryAdapter = {
@@ -39,11 +39,15 @@ export const html5HistoryAdapter: HistoryAdapter = {
   },
 }
 
+export type Parse<T> = (queryString: string) => T
+
+export type Stringify<T> = (state: T) => string
+
 export type Config<T> = {
   history: HistoryAdapter
   serialisation: {
-    parse: (queryString: Search) => T
-    stringify: (state: T) => Search
+    parse: Parse<T>
+    stringify: Stringify<T>
   }
   shouldPushState: (next: T, current: T) => boolean
 }
@@ -99,19 +103,33 @@ export function useUrlState<T>(
   return [currentState, setUrlState]
 }
 
+export type UrlStateProps<T> = {
+  setUrlState: (newState: T) => void
+  urlState: T
+}
+
+export type Props<T> = {
+  config?: Config<T>
+  initialState: T
+  render: (renderProps: UrlStateProps<T>) => ReactChild
+}
+
+export const UrlState = <T>(props: Props<T>) => {
+  const [urlState, setUrlState] = useUrlState<T>(props.initialState, props.config)
+  return props.render({ setUrlState, urlState })
+}
+
 export type PropEnhancer<Props, MappedProps> = (
   component: ComponentType<MappedProps>,
 ) => ComponentType<Props>
 
 export type HocConfig<T, OP> = {
   history: HistoryAdapter
-  serialisation: { parse: (queryString: string) => T; stringify: (state: T) => string }
+  serialisation: {
+    parse: (queryString: string) => T
+    stringify: (state: T) => string
+  }
   shouldPushState: (props: OP) => (next: T, current: T) => boolean
-}
-
-export type UrlStateProps<T> = {
-  setUrlState: (newState: T) => void
-  urlState: T
 }
 
 export const withUrlState = <T extends {}, OP = {}>(
@@ -130,15 +148,4 @@ export const withUrlState = <T extends {}, OP = {}>(
     urlState,
     setUrlState,
   } as any) as OP & UrlStateProps<T>)
-}
-
-export type Props<T> = {
-  config?: Config<T>
-  initialState: T
-  render: (renderProps: UrlStateProps<T>) => ReactChild
-}
-
-export const UrlState = <T>(props: Props<T>) => {
-  const [urlState, setUrlState] = useUrlState<T>(props.initialState, props.config)
-  return props.render({ setUrlState, urlState })
 }

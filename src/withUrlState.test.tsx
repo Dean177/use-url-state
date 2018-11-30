@@ -67,7 +67,7 @@ describe('useUrlState', () => {
     expect(parseQueryString(testHistory.location.search)).toEqual({ color: 'Blue' })
   })
 
-  it('will not override any params which are already provided in the query string', async () => {
+  it('will not override any params which are already provided in the query string', () => {
     const UrlConnectedControls = () => {
       const [urlState, setUrlState] = useUrlState<ControlState>(
         { color: 'Red' },
