@@ -125,3 +125,10 @@ The api provided is:
 - has a render-prop alternative for convenience
 - type-safe thanks to [Typescript](https://www.typescriptlang.org/)
 - very similar to [Reacts built in state](https://reactjs.org/docs/state-and-lifecycle.html) apis, so converting a component which already manages state is usually as simple as replacing `setState` with `setUrlState`!
+
+
+## Pollyfill
+
+For use in IE11 you will need [https://github.com/kumarharsh/custom-event-polyfill](https://github.com/kumarharsh/custom-event-polyfill)
+and add `import 'custom-event-polyfill';` 
+`if (typeof Event !== 'function') { window.Event = CustomEvent; }` to the upper scope of your application. 
