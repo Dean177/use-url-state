@@ -1,4 +1,3 @@
-import { render, fireEvent, cleanup, waitForElement } from 'react-testing-library'
 import {
   createBrowserHistory,
   createMemoryHistory,
@@ -11,13 +10,14 @@ import { interceptor } from 'props-interceptor'
 import qs from 'qs'
 import queryString from 'query-string'
 import React, { ReactElement } from 'react'
+import { cleanup, fireEvent, render } from 'react-testing-library'
 import {
   HistoryAdapter,
-  withUrlState,
-  UrlStateProps,
-  html5HistoryAdapter,
   HocConfig,
+  html5HistoryAdapter,
+  UrlStateProps,
   useUrlState,
+  withUrlState,
 } from './withUrlState'
 
 type ControlState = { animal?: string; color: string }
