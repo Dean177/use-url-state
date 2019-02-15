@@ -17,8 +17,14 @@
     "react-dom": "^16.8.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.1.0",
     "@types/history": "4.7.2",
-    "@types/jest": "24.0.4",
+    "@types/jest": "24.0.5",
     "@types/lodash": "4.14.121",
     "@types/qs": "6.5.1",
     "@types/query-string": "6.2.0",
@@ -36,11 +42,10 @@
     "prettier": "1.16.4",
     "props-interceptor": "1.0.1",
     "query-string": "6.2.0",
-    "react": "16.8.1",
-    "react-dom": "16.8.1",
-    "react-test-renderer": "16.8.1",
+    "react": "16.8.2",
+    "react-dom": "16.8.2",
+    "react-test-renderer": "16.8.2",
     "react-testing-library": "5.8.0",
-    "ts-jest": "23.10.5",
     "tslint": "5.12.1",
     "tslint-react": "3.6.0",
     "typescript": "3.3.3"
@@ -62,11 +67,8 @@
       "<rootDir>/setupTestFramework.js"
     ],
     "testMatch": [
-      "<rootDir>/src/**/?(*.)(spec|test).ts?(x)"
-    ],
-    "transform": {
-      ".(ts|tsx)": "ts-jest"
-    }
+      "<rootDir>/src/**/?(*.)test.ts?(x)"
+    ]
   },
   "prettier": {
     "printWidth": 90,
