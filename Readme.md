@@ -8,6 +8,10 @@ Lifts the state out of a react component and into the url
 
 ![color-example](./demo/color-example.gif)
 
+## Hooks
+
+There is a [hook](https://reactjs.org/docs/hooks-intro.html) based api available on the [3.0.0](https://github.com/Dean177/with-url-state/tree/3.0.0) branch, published as a beta on [npm](https://www.npmjs.com/package/with-url-state/v/3.0.0-beta.0).
+
 ## Installation
 
 To install with npm use
