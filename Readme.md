@@ -59,7 +59,7 @@ import { withUrlState, UrlStateProps } from 'with-url-state'
 type OwnProps = {}
 type UrlState = { color: string }
 
-const enhance = withUrlState<OwnProps, UrlState>((prop: OwnProps) => ({ color: 'blue' }))
+const enhance = withUrlState<UrlState, OwnProps>((prop: OwnProps) => ({ color: 'blue' }))
 
 export const UrlForm = enhance((props: OwnProps & UrlStateProps<UrlState>) => (
   <div className="UrlForm">
