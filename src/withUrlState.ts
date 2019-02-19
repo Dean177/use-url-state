@@ -32,7 +32,7 @@ declare var window: Window & {
   Event: typeof Event
 }
 
-export const html5HistoryAdapter: HistoryAdapter = {
+export const html5HistoryAdapter = (): HistoryAdapter => ({
   listen: (listener): UnregisterCallback => {
     window.addEventListener('popstate', listener)
     return () => window.removeEventListener('popstate', listener)
@@ -46,7 +46,7 @@ export const html5HistoryAdapter: HistoryAdapter = {
     window.history.replaceState(window.history.state, document.title, search)
     window.dispatchEvent(new window.Event('popstate'))
   },
-}
+})
 
 export type Parse<T> = (queryString: string) => T
 
@@ -64,7 +64,7 @@ export type Config<T> = {
 const alwaysReplace = () => false
 
 const parseConfig = <T>(config: Partial<Config<T>> = {}): Config<T> => ({
-  history: config.history ? config.history : html5HistoryAdapter,
+  history: config.history ? config.history : html5HistoryAdapter(),
   serialisation: {
     parse:
       config.serialisation && config.serialisation.parse

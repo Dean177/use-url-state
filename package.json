@@ -1,7 +1,8 @@
 {
   "author": "Dean Merchant <deanmerchant@gmail.com> (https://github.com/Dean177",
   "contributors": [
-    "Matt Hawes <hawes.info@gmail.com> (https://github.com/MGHawes)"
+    "Matt Hawes <hawes.info@gmail.com> (https://github.com/MGHawes)",
+    "Henrique Lange <hlangeseverino@gmail.com> (https://github.com/Henriquelange)"
   ],
   "name": "with-url-state",
   "version": "2.0.2",

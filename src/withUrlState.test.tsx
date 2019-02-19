@@ -416,26 +416,26 @@ describe('withUrlState', () => {
     })
 
     it(`registers itself as an event listener of 'popstate'`, () => {
-      html5HistoryAdapter.listen(listener)
+      html5HistoryAdapter().listen(listener)
       expect(window.addEventListener).toHaveBeenCalledWith('popstate', listener)
     })
 
     it(`returns a callback which will remove itself as an event listener of 'popstate'`, () => {
-      const unsubscribe = html5HistoryAdapter.listen(listener)
+      const unsubscribe = html5HistoryAdapter().listen(listener)
       unsubscribe()
       expect(window.removeEventListener).toHaveBeenCalledWith('popstate', listener)
     })
 
     it(`defers to the 'history' global when pushing an event`, () => {
-      html5HistoryAdapter.listen(listener)
-      html5HistoryAdapter.push({ search: 'foo=bar' })
+      html5HistoryAdapter().listen(listener)
+      html5HistoryAdapter().push({ search: 'foo=bar' })
 
       expect(window.history.pushState).toHaveBeenCalled()
     })
 
     it(`defers to the 'history' global when replacing an event`, () => {
-      html5HistoryAdapter.listen(listener)
-      html5HistoryAdapter.replace({ search: 'foo=bar' })
+      html5HistoryAdapter().listen(listener)
+      html5HistoryAdapter().replace({ search: 'foo=bar' })
 
       expect(window.history.replaceState).toHaveBeenCalled()
     })
