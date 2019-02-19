@@ -72,18 +72,15 @@ export function useUrlState<T>(
   } as T)
   // tslint:enable:no-any
 
-  useEffect(
-    () => {
-      history.replace({
-        ...history.location,
-        search: serialisation.stringify(currentState),
-      })
-      return history.listen(function onLocationChange() {
-        setSearch(serialisation.parse(history.location.search))
-      })
-    },
-    [history],
-  )
+  useEffect(() => {
+    history.replace({
+      ...history.location,
+      search: serialisation.stringify(currentState),
+    })
+    return history.listen(function onLocationChange() {
+      setSearch(serialisation.parse(history.location.search))
+    })
+  }, [history])
 
   function setUrlState(newState: T): void {
     const nextLocation = {
@@ -133,7 +130,7 @@ export const withUrlState = <T extends {}, OP = {}>(
 }
 
 export type Props<T> = {
-  config?: Config<T>
+  config?: Partial<Config<T>>
   initialState: T
   render: (renderProps: UrlStateProps<T>) => ReactChild
 }
