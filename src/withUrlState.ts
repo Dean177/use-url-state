@@ -6,7 +6,7 @@ import {
   UnregisterCallback,
 } from 'history'
 import qs from 'qs'
-import { useState, useEffect, ComponentType, createElement, ReactChild } from 'react'
+import { useState, useEffect, ComponentType, createElement, ReactElement } from 'react'
 
 declare var window: Window & {
   Event: typeof Event
@@ -106,9 +106,9 @@ export type UrlStateProps<T> = {
 }
 
 export type Props<T> = {
-  config?: Config<T>
+  config?: Partial<Config<T>>
   initialState: T
-  render: (renderProps: UrlStateProps<T>) => ReactChild
+  render: (renderProps: UrlStateProps<T>) => ReactElement
 }
 
 export const UrlState = <T>(props: Props<T>) => {

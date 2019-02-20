@@ -1,7 +1,8 @@
 {
   "author": "Dean Merchant <deanmerchant@gmail.com> (https://github.com/Dean177",
   "contributors": [
-    "Matt Hawes <hawes.info@gmail.com> (https://github.com/MGHawes)"
+    "Matt Hawes <hawes.info@gmail.com> (https://github.com/MGHawes)",
+    "Charles Rea (https://github.com/CharlesRea)"
   ],
   "name": "with-url-state",
   "version": "3.0.0-alpha.2",
@@ -67,7 +68,7 @@
       "<rootDir>/setupTestFramework.js"
     ],
     "testMatch": [
-      "<rootDir>/src/**/?(*.)test.ts?(x)"
+      "<rootDir>/src/**/*.test.ts?(x)"
     ]
   },
   "prettier": {
