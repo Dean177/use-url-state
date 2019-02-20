@@ -15,6 +15,7 @@ import {
   HistoryAdapter,
   HocConfig,
   html5HistoryAdapter,
+  UrlState,
   UrlStateProps,
   useUrlState,
   withUrlState,
@@ -158,6 +159,25 @@ describe('useUrlState', () => {
     expect(parseQueryString(testHistory.location.search)).toEqual({
       animal: 'Ant',
       color: 'Green',
+    })
+  })
+
+  describe('render props API', () => {
+    it('sets the url with the initial state', () => {
+      render(
+        <UrlState<ControlState>
+          initialState={{ animal: 'Ant', color: 'Blue' }}
+          config={{ history: testHistory }}
+          render={({ setUrlState, urlState }: UrlStateProps<ControlState>) => (
+            <UrlBasedControls setUrlState={setUrlState} urlState={urlState} />
+          )}
+        />,
+      )
+
+      expect(parseQueryString(testHistory.location.search)).toEqual({
+        animal: 'Ant',
+        color: 'Blue',
+      })
     })
   })
 
