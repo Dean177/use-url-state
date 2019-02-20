@@ -23,7 +23,7 @@ export type HistoryAdapter = {
   replace: (location: LocationDescriptorObject) => void
 }
 
-export const html5HistoryAdapter: HistoryAdapter = {
+export const html5HistoryAdapter = (): HistoryAdapter => ({
   listen: (listener: () => void): UnregisterCallback => {
     window.addEventListener('popstate', listener)
     return () => window.removeEventListener('popstate', listener)
@@ -37,7 +37,7 @@ export const html5HistoryAdapter: HistoryAdapter = {
     window.history.replaceState(window.history.state, document.title, search)
     window.dispatchEvent(new window.Event('popstate'))
   },
-}
+})
 
 export type Parse<T> = (queryString: string) => T
 
@@ -55,7 +55,7 @@ export type Config<T> = {
 const alwaysReplaceState: Config<any>['shouldPushState'] = () => false
 
 const parseConfig = <T extends {}>(config: Partial<Config<T>> = {}): Config<T> => ({
-  history: config.history || html5HistoryAdapter,
+  history: config.history || html5HistoryAdapter(),
   serialisation: config.serialisation || {
     parse: (queryString: string) => qs.parse(queryString, { ignoreQueryPrefix: true }),
     stringify: (state: Partial<T>) => qs.stringify(state, { addQueryPrefix: true }),
