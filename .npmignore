@@ -1,11 +1,13 @@
 .circleci
 .idea
 coverage
+demo
+demo-build
 dist/withUrlState.test.js
 dist/withUrlState.test.d.ts
 example
 node_modules
 src
 setupTestFramework.js
-yarn.lock
 yarn-error.log
+yarn.lock

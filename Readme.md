@@ -2,12 +2,11 @@
 
 [![CircleCI](https://circleci.com/gh/Dean177/with-url-state.svg?style=shield)](https://circleci.com/gh/Dean177/with-url-state)
 [![codecov](https://codecov.io/gh/Dean177/with-url-state/branch/master/graph/badge.svg)](https://codecov.io/gh/Dean177/with-url-state)
-[![Greenkeeper badge](https://badges.greenkeeper.io/Dean177/with-url-state.svg)](https://greenkeeper.io/)
 [![Npm](https://badge.fury.io/js/with-url-state.svg)](https://www.npmjs.com/package/with-url-state)
 
 Lifts the state out of a react component and into the url
 
-![color-example](./example/color-example.gif)
+![color-example](./demo/color-example.gif)
 
 ## Installation
 
@@ -21,7 +20,7 @@ To install with yarn use
 
 ## Usage
 
-Play with it in [CodeSandbox](https://codesandbox.io/s/nk04py9v6p)
+Check out the the [demo](https://dean177.github.io/with-url-state/) view the [code](https://github.com/Dean177/with-url-state/tree/master/demo) or play with it in [CodeSandbox](https://codesandbox.io/s/18x4l87yx7). 
 
 Using javascript
 
