@@ -29,7 +29,7 @@
     "@types/lodash": "4.14.121",
     "@types/qs": "6.5.1",
     "@types/query-string": "6.2.0",
-    "@types/react": "16.8.3",
+    "@types/react": "16.8.4",
     "@types/react-dom": "16.8.1",
     "@types/react-test-renderer": "16.8.1",
     "codecov": "3.2.0",
@@ -103,8 +103,8 @@
   "files": [
     "dist"
   ],
-  "main": "dist/withUrlState.js",
-  "types": "dist/withUrlState.d.ts",
+  "main": "dist/useUrlState.js",
+  "types": "dist/useUrlState.d.ts",
   "scripts": {
     "build": "rm -rf dist && tsc",
     "build:demo": "rm -rf demo-build && cd demo && yarn && yarn build && mv build ../demo-build",

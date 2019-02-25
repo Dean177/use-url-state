@@ -1,7 +1,15 @@
+# dependencies
 /node_modules
+/.pnp
+.pnp.js
+
+# testing
 /coverage
+
+# production
 /build
-/.cache-loader
+
+# misc
 .DS_Store
 .env.local
 .env.development.local

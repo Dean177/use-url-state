@@ -51,6 +51,16 @@ export const UrlForm = () => {
 }
 ```
 
+## TODO - FAQ's? Gotchas?
+
+Url state must be represented as strings
+
+no way to tell the if `?someParam=false` should be dematerialised to a boolean or to a string. See the following issue for more detail: 
+
+You should validate the values you receive, they are user editable! 
+
+## Alternative API's
+
 Using the higher-order-component api
 
 ```javascript

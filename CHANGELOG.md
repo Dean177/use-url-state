@@ -2,7 +2,10 @@
 
 ### Breaking changes
 
-WIP
+- This version new requires a minimum React version of 16.8.0
+- FlatStringy
+- InitialState
+- push / replace is controlled through history action setState 
 
 ### New features
 

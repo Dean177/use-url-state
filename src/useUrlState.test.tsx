@@ -12,14 +12,14 @@ import queryString from 'query-string'
 import React, { ReactElement } from 'react'
 import { cleanup, fireEvent, render } from 'react-testing-library'
 import {
+  Config,
   HistoryAdapter,
-  HocConfig,
   html5HistoryAdapter,
   UrlState,
   UrlStateProps,
   useUrlState,
   withUrlState,
-} from './withUrlState'
+} from './useUrlState'
 
 type ControlState = { animal?: string; color: string }
 
@@ -162,6 +162,34 @@ describe('useUrlState', () => {
     })
   })
 
+  it('updates the wrapped component state when the url changes', () => {
+    const UrlConnectedControls = () => {
+      const [urlState, setUrlState] = useUrlState<ControlState>(
+        { animal: 'Ant', color: 'Blue' },
+        { history: testHistory },
+      )
+      return <UrlBasedControls setUrlState={setUrlState} urlState={urlState} />
+    }
+
+    const wrapper = effectfulRender(<UrlConnectedControls />)
+    expect(wrapper.getByTestId('currentAnimal').textContent).toBe('Ant')
+    expect(wrapper.getByTestId('currentColor').textContent).toBe('Blue')
+    expect(parseQueryString(testHistory.location.search)).toEqual({
+      animal: 'Ant',
+      color: 'Blue',
+    })
+
+    fireEvent.click(wrapper.getByTestId('Green'))
+    wrapper.rerender(<UrlConnectedControls />)
+
+    expect(wrapper.getByTestId('currentAnimal').textContent).toBe('Ant')
+    expect(wrapper.getByTestId('currentColor').textContent).toBe('Green')
+    expect(parseQueryString(testHistory.location.search)).toEqual({
+      animal: 'Ant',
+      color: 'Green',
+    })
+  })
+
   describe('render props API', () => {
     it('sets the url with the initial state', () => {
       render(
@@ -181,47 +209,42 @@ describe('useUrlState', () => {
     })
   })
 
-  describe('config', () => {
-    describe('shouldPushState', () => {
-      it('takes a predicate used to decide if the new search is pushed or replaced', () => {
-        const propSpy = jest.fn()
-        const memoryHistory = createMemoryHistory()
-        const hocConfig: Partial<HocConfig<ControlState, {}>> = {
+  describe('setUrlState', () => {
+    it('takes an optional parameter used to decide if the new search is pushed or replaced', () => {
+      const memoryHistory = createMemoryHistory()
+      const capturedProps: Array<UrlStateProps<ControlState>> = []
+      const UrlConnectedControls = flow(
+        interceptor((props: UrlStateProps<ControlState>) => capturedProps.push(props)),
+        withUrlState<ControlState>(() => ({ animal: 'Bat', color: 'blue' }), {
           history: memoryHistory,
-          shouldPushState: () => (n: ControlState, p: ControlState) => true,
-        }
-        const UrlConnectedControls = flow(
-          interceptor((props: UrlStateProps<ControlState>) => propSpy(props)),
-          withUrlState<ControlState, {}>(() => ({ color: 'Red' }), hocConfig),
-        )(UrlBasedControls)
+        }),
+      )(UrlBasedControls)
 
-        effectfulRender(<UrlConnectedControls />)
-        const { setUrlState } = propSpy.mock.calls[0][0]
-        setUrlState({ color: 'Green' })
-        setUrlState({ color: 'Blue' })
-        expect(memoryHistory.action).toBe('PUSH')
-        expect(memoryHistory.entries.length).toBe(3)
-      })
+      effectfulRender(<UrlConnectedControls />)
+      const { setUrlState } = capturedProps[0]
+      setUrlState({ color: 'Green' }, 'push')
+      setUrlState({ color: 'Blue' }, 'push')
 
-      it('allows comparison of the *parsed* state to be applied and the current state', () => {
-        const shouldPushState = jest.fn()
-        const capturedProps: Array<UrlStateProps<ControlState>> = []
-        const UrlConnectedControls = flow(
-          interceptor((props: UrlStateProps<ControlState>) => capturedProps.push(props)),
-          withUrlState<ControlState>(() => ({ animal: 'Bat', color: 'blue' }), {
-            history: testHistory,
-            shouldPushState: () => shouldPushState,
-          }),
-        )(UrlBasedControls)
+      expect(memoryHistory.action).toBe('PUSH')
+    })
 
-        effectfulRender(<UrlConnectedControls />)
-        const { setUrlState, urlState } = capturedProps[0]
+    it('takes an optional parameter used to replaced the existing state', () => {
+      const memoryHistory = createMemoryHistory()
+      const capturedProps: Array<UrlStateProps<ControlState>> = []
+      const UrlConnectedControls = flow(
+        interceptor((props: UrlStateProps<ControlState>) => capturedProps.push(props)),
+        withUrlState<ControlState>(() => ({ animal: 'Bat', color: 'blue' }), {
+          history: memoryHistory,
+        }),
+      )(UrlBasedControls)
 
-        const nextState = { animal: 'Cat', color: 'cyan' }
-        setUrlState(nextState)
+      effectfulRender(<UrlConnectedControls />)
+      const { setUrlState, urlState } = capturedProps[0]
 
-        expect(shouldPushState).toBeCalledWith(nextState, urlState)
-      })
+      const nextState = { animal: 'Cat', color: 'cyan' }
+      setUrlState(nextState, 'replace')
+
+      expect(memoryHistory.action).toBe('REPLACE')
     })
 
     describe('history', () => {
@@ -244,7 +267,6 @@ describe('useUrlState', () => {
           location: {
             pathname: 'pathname',
             search: '?search',
-            hash: '',
           },
           listen: (listener: LocationListener) => unsubscribeCallback,
           push: (location: LocationDescriptorObject) => {}, // tslint:disable-line
@@ -269,7 +291,7 @@ describe('useUrlState', () => {
 
     describe('serialisation', () => {
       it('accepts a custom parse and stringify', () => {
-        const config: Partial<HocConfig<ControlState, {}>> = {
+        const config: Partial<Config<ControlState>> = {
           history: testHistory,
           serialisation: {
             parse: queryString.parse as any,
@@ -321,7 +343,7 @@ describe('useUrlState', () => {
           }
         }
 
-        const config: Partial<HocConfig<QueryParams, {}>> = {
+        const config: Partial<Config<QueryParams>> = {
           history: testHistory,
           serialisation: {
             parse: (queryStr: string): QueryParams => {
@@ -380,9 +402,12 @@ describe('useUrlState', () => {
           </div>
         )
 
+        // TODO
+        //   Add an additional type parameter to allow clients customising the
+        //   serialisation config to specify the return type of their parse function?
         const UrlConnectedControls = withUrlState<QueryParams>(
-          () => defaultQueryParameters,
-          config,
+          () => defaultQueryParameters as any,
+          config as any,
         )(QueryParamComponent)
 
         const wrapper = effectfulRender(<UrlConnectedControls />)
@@ -418,54 +443,43 @@ describe('useUrlState', () => {
   })
 
   describe('html5HistoryAdapter', () => {
-    const listener = () => {} // tslint:disable-line
-    let addTemp = window.addEventListener
-    let removeTemp = window.removeEventListener
-    let dispatchTemp = window.dispatchEvent
     let historyPushTemp = window.history.pushState
     let historyReplaceTemp = window.history.replaceState
 
     beforeEach(() => {
-      window.addEventListener = jest.fn()
-      window.dispatchEvent = jest.fn()
-      window.removeEventListener = jest.fn()
       window.history.pushState = jest.fn()
       window.history.replaceState = jest.fn()
     })
 
     afterEach(() => {
-      window.addEventListener = addTemp
-      window.dispatchEvent = dispatchTemp
-      window.removeEventListener = removeTemp
       window.history.pushState = historyPushTemp
       window.history.replaceState = historyReplaceTemp
     })
 
-    it(`registers itself as an event listener of 'popstate'`, () => {
-      html5HistoryAdapter.listen(listener)
-      expect(window.addEventListener).toHaveBeenCalledWith('popstate', listener)
-    })
-
-    it(`returns a callback which will remove itself as an event listener of 'popstate'`, () => {
-      const unsubscribe = html5HistoryAdapter.listen(listener)
-      unsubscribe()
-      expect(window.removeEventListener).toHaveBeenCalledWith('popstate', listener)
-    })
-
-    it(`defers to the 'history' global when pushing an event`, () => {
-      html5HistoryAdapter.listen(listener)
-      html5HistoryAdapter.push({ search: 'foo=bar' })
+    it(`notifies its listeners for push events`, () => {
+      const listener = jest.fn(() => () => {})
+      const historyAdapter = html5HistoryAdapter()
+      historyAdapter.listen(listener)
+      historyAdapter.push({
+        pathname: '/',
+        search: 'foo=bar',
+      })
 
       expect(window.history.pushState).toHaveBeenCalled()
-      expect(window.dispatchEvent).toHaveBeenCalled()
+      expect(listener).toHaveBeenCalled()
     })
 
-    it(`defers to the 'history' global when replacing an event`, () => {
-      html5HistoryAdapter.listen(listener)
-      html5HistoryAdapter.replace({ search: 'foo=bar' })
+    it('notifies its listeners for replace events', () => {
+      const listener = jest.fn(() => () => {})
+      const historyAdapter = html5HistoryAdapter()
+      historyAdapter.listen(listener)
+      historyAdapter.replace({
+        pathname: '/',
+        search: 'foo=bar',
+      })
 
       expect(window.history.replaceState).toHaveBeenCalled()
-      expect(window.dispatchEvent).toHaveBeenCalled()
+      expect(listener).toHaveBeenCalled()
     })
   })
 })
