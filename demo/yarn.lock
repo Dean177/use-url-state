@@ -11948,8 +11948,10 @@ with-async@1.0.0-beta.0:
     lint-staged "8.1.4"
     rimraf "2.6.3"
 
-"with-url-state@file:..":
-  version "3.0.0-alpha.2"
+with-url-state@3.0.0-beta.1:
+  version "3.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/with-url-state/-/with-url-state-3.0.0-beta.1.tgz#121ed38d5939180580e17182ed198bedf8ac9618"
+  integrity sha512-efgLVMkYbbG48hrmJQlZx7aXfk14IhPFDR1vPMEnGdVJQVUjbNitOcEMBqvNgUmVJ1vSkf5jjAq9G4Ccd7S4WQ==
   dependencies:
     qs "^6.6.0"
 

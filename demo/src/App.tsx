@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Map, TileLayer } from 'react-leaflet'
 import styled, { css, createGlobalStyle } from 'styled-components'
 import { hasSucceeded, isLoading, useAsync } from 'with-async'
-import { withUrlState, UrlStateProps, UrlState, useUrlState } from './withUrlState'
+import { withUrlState, UrlStateProps, UrlState, useUrlState } from 'with-url-state'
 import 'leaflet/dist/leaflet.css'
 
 const AppStyles = createGlobalStyle`
