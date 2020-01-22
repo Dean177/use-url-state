@@ -1,15 +1,22 @@
 {
-  "main.css": "/with-url-state/static/css/main.9712c934.chunk.css",
-  "main.js": "/with-url-state/static/js/main.0eff42c2.chunk.js",
-  "main.js.map": "/with-url-state/static/js/main.0eff42c2.chunk.js.map",
-  "static/css/1.051ae9b9.chunk.css": "/with-url-state/static/css/1.051ae9b9.chunk.css",
-  "static/js/1.5d7c69bb.chunk.js": "/with-url-state/static/js/1.5d7c69bb.chunk.js",
-  "static/js/1.5d7c69bb.chunk.js.map": "/with-url-state/static/js/1.5d7c69bb.chunk.js.map",
-  "runtime~main.js": "/with-url-state/static/js/runtime~main.9868c114.js",
-  "runtime~main.js.map": "/with-url-state/static/js/runtime~main.9868c114.js.map",
-  "static/css/main.9712c934.chunk.css.map": "/with-url-state/static/css/main.9712c934.chunk.css.map",
-  "static/css/1.051ae9b9.chunk.css.map": "/with-url-state/static/css/1.051ae9b9.chunk.css.map",
-  "index.html": "/with-url-state/index.html",
-  "precache-manifest.b8cb7fba62bb43c08079d019733f4ac2.js": "/with-url-state/precache-manifest.b8cb7fba62bb43c08079d019733f4ac2.js",
-  "service-worker.js": "/with-url-state/service-worker.js"
+  "files": {
+    "main.js": "/with-url-state/static/js/main.9535ce3e.chunk.js",
+    "main.js.map": "/with-url-state/static/js/main.9535ce3e.chunk.js.map",
+    "runtime-main.js": "/with-url-state/static/js/runtime-main.ee6b6950.js",
+    "runtime-main.js.map": "/with-url-state/static/js/runtime-main.ee6b6950.js.map",
+    "static/css/2.36f280e5.chunk.css": "/with-url-state/static/css/2.36f280e5.chunk.css",
+    "static/js/2.fd373384.chunk.js": "/with-url-state/static/js/2.fd373384.chunk.js",
+    "static/js/2.fd373384.chunk.js.map": "/with-url-state/static/js/2.fd373384.chunk.js.map",
+    "index.html": "/with-url-state/index.html",
+    "precache-manifest.501649c51e3d4bb8979d1a06f7573f08.js": "/with-url-state/precache-manifest.501649c51e3d4bb8979d1a06f7573f08.js",
+    "service-worker.js": "/with-url-state/service-worker.js",
+    "static/css/2.36f280e5.chunk.css.map": "/with-url-state/static/css/2.36f280e5.chunk.css.map",
+    "static/js/2.fd373384.chunk.js.LICENSE": "/with-url-state/static/js/2.fd373384.chunk.js.LICENSE"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ee6b6950.js",
+    "static/css/2.36f280e5.chunk.css",
+    "static/js/2.fd373384.chunk.js",
+    "static/js/main.9535ce3e.chunk.js"
+  ]
 }
