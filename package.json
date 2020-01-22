@@ -5,51 +5,51 @@
     "Charles Rea (https://github.com/CharlesRea)"
   ],
   "name": "with-url-state",
-  "version": "3.0.0-beta.1",
+  "version": "3.0.0-beta.2",
   "repository": {
     "type": "git",
-    "url": "dean177/with-url-state"
+    "url": "dean177/use-url-state"
   },
   "dependencies": {
-    "qs": "^6.6.0"
+    "qs": "^6.9.1"
   },
   "peerDependencies": {
     "react": "^16.8.0",
     "react-dom": "^16.8.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.0",
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
-    "@babel/preset-env": "^7.1.0",
-    "@babel/preset-react": "^7.0.0",
-    "@babel/preset-typescript": "^7.1.0",
-    "@types/history": "4.7.2",
-    "@types/jest": "24.0.5",
-    "@types/lodash": "4.14.121",
-    "@types/qs": "6.5.1",
-    "@types/query-string": "6.2.0",
-    "@types/react": "16.8.4",
-    "@types/react-dom": "16.8.1",
-    "@types/react-test-renderer": "16.8.1",
-    "codecov": "3.2.0",
-    "concurrently": "4.1.0",
+    "@babel/core": "^7.8.3",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-proposal-object-rest-spread": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/preset-react": "^7.8.3",
+    "@babel/preset-typescript": "^7.8.3",
+    "@types/history": "4.7.4",
+    "@types/jest": "24.9.0",
+    "@types/lodash": "4.14.149",
+    "@types/qs": "6.9.0",
+    "@types/query-string": "6.3.0",
+    "@types/react": "16.9.19",
+    "@types/react-dom": "16.9.5",
+    "@types/react-test-renderer": "16.9.1",
+    "codecov": "3.6.1",
+    "concurrently": "5.0.2",
     "ghpages": "0.0.10",
-    "history": "4.7.2",
-    "husky": "1.3.1",
-    "jest": "24.1.0",
-    "jsdom": "13.2.0",
-    "lint-staged": "8.1.4",
-    "prettier": "1.16.4",
+    "history": "4.10.1",
+    "husky": "4.2.0",
+    "jest": "25.1.0",
+    "jsdom": "16.0.1",
+    "lint-staged": "10.0.2",
+    "prettier": "1.19.1",
     "props-interceptor": "1.0.1",
-    "query-string": "6.2.0",
-    "react": "16.8.2",
-    "react-dom": "16.8.2",
-    "react-test-renderer": "16.8.2",
+    "query-string": "6.10.1",
+    "react": "16.12.0",
+    "react-dom": "16.12.0",
+    "react-test-renderer": "16.12.0",
     "react-testing-library": "5.8.0",
-    "tslint": "5.12.1",
-    "tslint-react": "3.6.0",
-    "typescript": "3.3.3"
+    "tslint": "6.0.0",
+    "tslint-react": "4.2.0",
+    "typescript": "3.7.5"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -79,12 +79,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": [
-        "lint-staged"
-      ],
-      "post-commit": [
-        "git update-index -g"
-      ]
+      "pre-commit": "lint-staged",
+      "post-commit": "git update-index -g"
     }
   },
   "lint-staged": {

@@ -82,7 +82,7 @@ export function useUrlState<T extends {}, ParseResult = FlatStringy<T>>(
   config?: Partial<Config<ParseResult>>,
 ): [
   ParseResult,
-  (newState: SetStateAction<ParseResult>, historyAction?: HistoryAction) => void
+  (newState: SetStateAction<ParseResult>, historyAction?: HistoryAction) => void,
 ] {
   const { history, serialisation } = useMemo(() => parseConfig(config), [config])
   const [currentState, setSearch] = useState<ParseResult>({

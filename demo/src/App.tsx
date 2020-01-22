@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import { Abortable } from 'abortable'
+import React from 'react'
 import { Map, TileLayer } from 'react-leaflet'
 import styled, { css, createGlobalStyle } from 'styled-components'
 import { hasSucceeded, isLoading, useAsync } from 'with-async'
-import { withUrlState, UrlStateProps, UrlState, useUrlState } from 'with-url-state'
+import { useUrlState } from 'with-url-state'
 import 'leaflet/dist/leaflet.css'
 
 const AppStyles = createGlobalStyle`
@@ -161,8 +162,19 @@ type SearchResults = {
   }>
 }
 
-const characterSearch = (name: string): Promise<SearchResults> =>
-  fetch(`https://swapi.co/api/people/?search=${name}`).then(r => r.json())
+const characterSearch = (name: string): Abortable<SearchResults> => {
+  let controller = new AbortController()
+  let signal = controller.signal
+  let request = fetch(`https://swapi.co/api/people/?search=${name}`, { signal })
+    .then(r => r.json())
+    .then(json => {
+      return json
+    }) as Abortable<SearchResults>
+  request.abort = () => {
+    controller.abort()
+  }
+  return request
+}
 
 type FormState = { name: string }
 export const SearchForm = () => {
