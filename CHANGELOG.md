@@ -3,13 +3,12 @@
 ### Breaking changes
 
 - This version new requires a minimum React version of 16.8.0
-- FlatStringy
-- InitialState
-- push / replace is controlled through history action setState 
+- The `withUrlState` higher-order component and the `Async` render-props component have been removed. They can easily be recreated from the hook, see the new 'recipes' section in [Readme.md](Readme.md) 
+- The typescript typings now enforce that you treat the state you receive as a single level object where all the values are stings (see `FlatStringy<T>` in [useUrlState.ts](./src/useUrlState.ts))
 
 ### New features
 
-In addition to the higher-order-component and render-prop APIs, a custom hook (`useUrlState`) is now provided that works almost the same way as the built in `useState` hook.
+- A hook (`useUrlState`) is now provided that works almost the same way as the built in `useState` hook.
 
 ## 2.0.0
 

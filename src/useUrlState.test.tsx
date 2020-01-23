@@ -5,24 +5,24 @@ import {
   LocationDescriptorObject,
   LocationListener,
 } from 'history'
-import { flow } from 'lodash'
-import { interceptor } from 'props-interceptor'
-import qs from 'qs'
-import queryString from 'query-string'
-import React, { ReactElement } from 'react'
-import { cleanup, fireEvent, render } from 'react-testing-library'
+import * as qs from 'qs'
+import * as queryString from 'query-string'
+import React, { ReactElement, SetStateAction } from 'react'
+import { act, cleanup, fireEvent, render } from 'react-testing-library'
 import {
   Config,
+  HistoryAction,
   HistoryAdapter,
   html5HistoryAdapter,
-  UrlState,
-  UrlStateProps,
   useUrlState,
-  withUrlState,
 } from './useUrlState'
 
 type ControlState = { animal?: string; color: string }
 
+type UrlStateProps<T> = {
+  urlState: T
+  setUrlState: (newState: SetStateAction<T>, historyAction?: HistoryAction) => void
+}
 const UrlBasedControls = (props: UrlStateProps<ControlState>) => (
   <div>
     <div data-testid="currentAnimal">{props.urlState.animal}</div>
@@ -151,8 +151,10 @@ describe('useUrlState', () => {
       color: 'Blue',
     })
 
-    fireEvent.click(wrapper.getByTestId('Green'))
-    wrapper.rerender(<UrlConnectedControls />)
+    act(() => {
+      fireEvent.click(wrapper.getByTestId('Green'))
+      wrapper.rerender(<UrlConnectedControls />)
+    })
 
     expect(wrapper.getByTestId('currentAnimal').textContent).toBe('Ant')
     expect(wrapper.getByTestId('currentColor').textContent).toBe('Green')
@@ -179,8 +181,10 @@ describe('useUrlState', () => {
       color: 'Blue',
     })
 
-    fireEvent.click(wrapper.getByTestId('Green'))
-    wrapper.rerender(<UrlConnectedControls />)
+    act(() => {
+      fireEvent.click(wrapper.getByTestId('Green'))
+      wrapper.rerender(<UrlConnectedControls />)
+    })
 
     expect(wrapper.getByTestId('currentAnimal').textContent).toBe('Ant')
     expect(wrapper.getByTestId('currentColor').textContent).toBe('Green')
@@ -190,59 +194,52 @@ describe('useUrlState', () => {
     })
   })
 
-  describe('render props API', () => {
-    it('sets the url with the initial state', () => {
-      render(
-        <UrlState<ControlState>
-          initialState={{ animal: 'Ant', color: 'Blue' }}
-          config={{ history: testHistory }}
-          render={({ setUrlState, urlState }: UrlStateProps<ControlState>) => (
-            <UrlBasedControls setUrlState={setUrlState} urlState={urlState} />
-          )}
-        />,
-      )
-
-      expect(parseQueryString(testHistory.location.search)).toEqual({
-        animal: 'Ant',
-        color: 'Blue',
-      })
-    })
-  })
-
   describe('setUrlState', () => {
     it('takes an optional parameter used to decide if the new search is pushed or replaced', () => {
       const memoryHistory = createMemoryHistory()
-      const capturedProps: Array<UrlStateProps<ControlState>> = []
-      const UrlConnectedControls = flow(
-        interceptor((props: UrlStateProps<ControlState>) => capturedProps.push(props)),
-        withUrlState<ControlState>(() => ({ animal: 'Bat', color: 'blue' }), {
-          history: memoryHistory,
-        }),
-      )(UrlBasedControls)
+      let capturedProps: UrlStateProps<ControlState> = null!
+      const UrlConnectedControls = () => {
+        let [urlState, setUrlState] = useUrlState(
+          { animal: 'Bat', color: 'blue' },
+          {
+            history: memoryHistory,
+          },
+        )
+        capturedProps = { urlState, setUrlState }
+        return <UrlBasedControls urlState={urlState} setUrlState={setUrlState} />
+      }
 
       effectfulRender(<UrlConnectedControls />)
-      const { setUrlState } = capturedProps[0]
-      setUrlState({ color: 'Green' }, 'push')
-      setUrlState({ color: 'Blue' }, 'push')
+      const { setUrlState } = capturedProps
+      act(() => {
+        setUrlState({ color: 'Green' }, 'push')
+        setUrlState({ color: 'Blue' }, 'push')
+      })
 
       expect(memoryHistory.action).toBe('PUSH')
     })
 
     it('takes an optional parameter used to replaced the existing state', () => {
       const memoryHistory = createMemoryHistory()
-      const capturedProps: Array<UrlStateProps<ControlState>> = []
-      const UrlConnectedControls = flow(
-        interceptor((props: UrlStateProps<ControlState>) => capturedProps.push(props)),
-        withUrlState<ControlState>(() => ({ animal: 'Bat', color: 'blue' }), {
-          history: memoryHistory,
-        }),
-      )(UrlBasedControls)
+      let capturedProps: UrlStateProps<ControlState>
+      const UrlConnectedControls = () => {
+        let [urlState, setUrlState] = useUrlState(
+          { animal: 'Bat', color: 'blue' },
+          {
+            history: memoryHistory,
+          },
+        )
+        capturedProps = { urlState, setUrlState }
+        return <UrlBasedControls urlState={urlState} setUrlState={setUrlState} />
+      }
 
       effectfulRender(<UrlConnectedControls />)
-      const { setUrlState, urlState } = capturedProps[0]
+      const { setUrlState, urlState } = capturedProps
 
       const nextState = { animal: 'Cat', color: 'cyan' }
-      setUrlState(nextState, 'replace')
+      act(() => {
+        setUrlState(nextState, 'replace')
+      })
 
       expect(memoryHistory.action).toBe('REPLACE')
     })
@@ -250,10 +247,15 @@ describe('useUrlState', () => {
     describe('history', () => {
       it('can accept a history provider to use alternate implementations', () => {
         const memoryHistory = createMemoryHistory()
-        const enhance = withUrlState<ControlState>(() => ({ color: 'Red' }), {
-          history: memoryHistory,
-        })
-        const UrlConnectedControls = enhance(UrlBasedControls)
+        const UrlConnectedControls = () => {
+          let [urlState, setUrlState] = useUrlState(
+            { color: 'Red' },
+            {
+              history: memoryHistory,
+            },
+          )
+          return <UrlBasedControls urlState={urlState} setUrlState={setUrlState} />
+        }
 
         effectfulRender(<UrlConnectedControls />)
 
@@ -273,14 +275,15 @@ describe('useUrlState', () => {
           replace: (location: LocationDescriptorObject) => {}, // tslint:disable-line
         }
 
-        const enhance = withUrlState<ControlState>(
-          () => ({ animal: 'Ant', color: 'Blue' }),
-          {
-            history: unsubscribeHistory,
-          },
-        )
-
-        const UrlConnectedControls = enhance(UrlBasedControls)
+        const UrlConnectedControls = () => {
+          let [urlState, setUrlState] = useUrlState(
+            { animal: 'Ant', color: 'Blue' },
+            {
+              history: unsubscribeHistory,
+            },
+          )
+          return <UrlBasedControls urlState={urlState} setUrlState={setUrlState} />
+        }
 
         const { unmount } = render(<UrlConnectedControls />)
         unmount()
@@ -298,10 +301,11 @@ describe('useUrlState', () => {
             stringify: queryString.stringify,
           },
         }
-        const UrlConnectedControls = withUrlState<ControlState>(
-          () => ({ color: 'Red' }),
-          config,
-        )(UrlBasedControls)
+        const UrlConnectedControls = () => {
+          let [urlState, setUrlState] = useUrlState({ color: 'Red' }, config)
+          return <UrlBasedControls urlState={urlState} setUrlState={setUrlState} />
+        }
+
         expect(parseQueryString(testHistory.location.search)).toEqual({ color: 'Blue' })
 
         const wrapper = render(<UrlConnectedControls />)
@@ -402,13 +406,13 @@ describe('useUrlState', () => {
           </div>
         )
 
-        // TODO
-        //   Add an additional type parameter to allow clients customising the
-        //   serialisation config to specify the return type of their parse function?
-        const UrlConnectedControls = withUrlState<QueryParams>(
-          () => defaultQueryParameters as any,
-          config as any,
-        )(QueryParamComponent)
+        const UrlConnectedControls = () => {
+          let [urlState, setUrlState] = useUrlState(
+            defaultQueryParameters as any,
+            config as any,
+          )
+          return <QueryParamComponent urlState={urlState} setUrlState={setUrlState} />
+        }
 
         const wrapper = effectfulRender(<UrlConnectedControls />)
 
@@ -420,14 +424,16 @@ describe('useUrlState', () => {
         expect(wrapper.getByTestId('q').textContent).toBe('Winchester')
         expect(wrapper.getByTestId('sort').textContent).toBe('BEST_MATCH')
 
-        testHistory.replace({
-          ...testHistory.location,
-          search: config!.serialisation!.stringify({
-            max_price: 30,
-            min_price: 20,
-            page: 3,
-            sort: 'NEARBY',
-          }),
+        act(() => {
+          testHistory.replace({
+            ...testHistory.location,
+            search: config!.serialisation!.stringify({
+              max_price: 30,
+              min_price: 20,
+              page: 3,
+              sort: 'NEARBY',
+            }),
+          })
         })
 
         expect(testHistory.location.search).toEqual(

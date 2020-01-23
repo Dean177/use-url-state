@@ -2,10 +2,11 @@
   "author": "Dean Merchant <deanmerchant@gmail.com> (https://github.com/Dean177",
   "contributors": [
     "Matt Hawes <hawes.info@gmail.com> (https://github.com/MGHawes)",
-    "Charles Rea (https://github.com/CharlesRea)"
+    "Charles Rea (https://github.com/CharlesRea)",
+    "Henrique Lange <hlangeseverino@gmail.com> (https://github.com/Henriquelange)"
   ],
   "name": "with-url-state",
-  "version": "3.0.0-beta.2",
+  "version": "3.0.0-beta.3",
   "repository": {
     "type": "git",
     "url": "dean177/use-url-state"
@@ -26,7 +27,6 @@
     "@babel/preset-typescript": "^7.8.3",
     "@types/history": "4.7.4",
     "@types/jest": "24.9.0",
-    "@types/lodash": "4.14.149",
     "@types/qs": "6.9.0",
     "@types/query-string": "6.3.0",
     "@types/react": "16.9.19",
@@ -41,7 +41,6 @@
     "jsdom": "16.0.1",
     "lint-staged": "10.0.2",
     "prettier": "1.19.1",
-    "props-interceptor": "1.0.1",
     "query-string": "6.10.1",
     "react": "16.12.0",
     "react-dom": "16.12.0",

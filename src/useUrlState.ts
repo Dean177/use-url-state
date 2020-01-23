@@ -105,13 +105,12 @@ export function useUrlState<T extends {}, ParseResult = FlatStringy<T>>(
     historyAction?: HistoryAction,
   ): void {
     setSearch(previousState => {
-      const newState =
-        typeof setStateAction === 'function'
+      const newState = {
+        ...previousState,
+        ...(typeof setStateAction === 'function'
           ? (setStateAction as Function)(previousState)
-          : {
-              ...previousState,
-              ...setStateAction,
-            }
+          : setStateAction),
+      }
 
       const nextLocation = {
         ...history.location,
@@ -127,38 +126,4 @@ export function useUrlState<T extends {}, ParseResult = FlatStringy<T>>(
   }
 
   return [currentState, setUrlState]
-}
-
-export type UrlStateProps<T extends {}> = {
-  setUrlState: (newState: FlatStringy<T>, historyAction?: HistoryAction) => void
-  urlState: FlatStringy<T>
-}
-
-export type Props<T extends {}> = {
-  config?: Partial<Config<FlatStringy<T>>>
-  initialState: FlatStringy<T>
-  render: (renderProps: UrlStateProps<T>) => ReactElement
-}
-
-export const UrlState = <T extends {}>(props: Props<T>) => {
-  const [urlState, setUrlState] = useUrlState<T>(props.initialState, props.config)
-  return props.render({ setUrlState, urlState })
-}
-
-export type PropEnhancer<Props, MappedProps> = (
-  component: ComponentType<MappedProps>,
-) => ComponentType<Props>
-
-export const withUrlState = <T extends {}, OP = {}>(
-  getInitialState: (props: OP) => FlatStringy<T>,
-  config: Partial<Config<FlatStringy<T>>> = {},
-): PropEnhancer<OP, OP & UrlStateProps<T>> => (
-  WrappedComponent: ComponentType<OP & UrlStateProps<T>>,
-): ComponentType<OP> => (props: OP) => {
-  const [urlState, setUrlState] = useUrlState<T>(getInitialState(props), config)
-  return createElement(WrappedComponent, {
-    ...props,
-    urlState,
-    setUrlState,
-  } as OP & UrlStateProps<T>)
 }
